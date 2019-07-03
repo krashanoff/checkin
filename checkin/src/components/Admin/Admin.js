@@ -19,10 +19,8 @@ class Admin extends React.Component {
 
     handleChange(event) {
         this.setState({pass: event.target.value});
-    }
-
-    componentWillUpdate(nextProps, nextState) {
-        if (nextState.pass === this.props.masterPass)
+        
+        if (event.target.value === this.props.masterPass)
             this.revealTable();
     }
 
