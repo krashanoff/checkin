@@ -1,6 +1,8 @@
 import React from 'react';
 import './Start.css';
 
+const SEARCHMIN = 3;
+
 /* TODO:
  *  - Reduce number of API requests made overall.
  */
@@ -63,7 +65,7 @@ class Start extends React.Component {
                     <input type='text' name='name' value={this.state.value} onChange={this.handleChange} />
                 </form>
                 {
-                    this.state.value.length >= 3 ?
+                    this.state.value.length >= SEARCHMIN ?
 
                     <Suggestions lastName={this.state.value} />
 

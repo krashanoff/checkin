@@ -17,9 +17,7 @@ class Checkin extends React.Component {
         console.log(API_KEY);
     }
 
-    render() {
-        const data = 'apiinformation';
-        
+    render() {        
         return (
             <div className='checkin'>
                 Welcome, {this.state.userID}!
