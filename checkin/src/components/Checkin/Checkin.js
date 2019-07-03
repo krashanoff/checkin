@@ -8,9 +8,7 @@ class Checkin extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            userID: ''
-        };
+        this.userID = '';
     }
 
     componentDidMount() {
@@ -20,9 +18,11 @@ class Checkin extends React.Component {
     }
 
     render() {
+        const data = 'apiinformation';
+        
         return (
             <div className='checkin'>
-                This is the check in page. Searching for id {this.state.userID}
+                Welcome, {this.state.userID}!
             </div>
         );
     }

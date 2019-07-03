@@ -6,7 +6,7 @@ class Results extends React.Component {
     componentDidMount() {
         console.log('entered the results page');
         const values = queryString.parse(this.props.location.search);
-        console.log('We were passed an argument to the URL of: ' + values.search);
+        console.log('We were passed an argument to the URL of: ' + values.name);
     }
 
     render() {

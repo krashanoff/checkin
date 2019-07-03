@@ -4,9 +4,7 @@ class Admin extends React.Component {
     constructor(props) {
         super(props);
         
-        this.props = {
-            masterPass: props.masterPass,
-        };
+        this.masterPass = props.masterPass;
         this.state = {pass: 'Please input PIN.'};
 
         this.handleChange = this.handleChange.bind(this);
