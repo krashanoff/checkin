@@ -1,10 +1,38 @@
 import React from 'react';
 
 class Admin extends React.Component {
+    constructor(props) {
+        super(props);
+        
+        this.props = {
+            masterPass: props.masterPass,
+        };
+        this.state = {pass: 'Please input PIN.'};
+
+        this.handleChange = this.handleChange.bind(this);
+        this.revealTable = this.revealTable.bind(this);
+    }
+
+    revealTable() {
+        console.log('1');
+    }
+
+    handleChange(event) {
+        this.setState({pass: event.target.value});
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        if (nextState.pass === this.props.masterPass)
+            this.revealTable();
+    }
+
     render() {
         return (
         <div className='admin'>
-            THIS IS THE ADMIN PAGE. IT SHOULD BE PROTECTED IN SOME ARBITRARY WAY.
+            <div id='password'>
+                <input type='text' name='PIN' pattern='^\d{4}$' value={this.state.pass} onChange={this.handleChange} required />
+                PASSWORD GOES HERE
+            </div>
         </div>
         );
     }

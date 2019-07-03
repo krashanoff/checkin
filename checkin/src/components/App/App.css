@@ -1,0 +1,23 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#nav {
+    display: flex;
+    width: 96%;
+    padding: 2%;
+    background: #bae;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+
+.navLink {
+    color: black;
+    font-size: 2em;
+    text-decoration: none;
+}
+
+#view {
+    margin: 5vh auto;
+}
