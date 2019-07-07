@@ -1,14 +1,15 @@
-from flask import Flask, request, jsonify
+#!/usr/bin/env python
+import os
+from flask import Flask, send_from_directory
 
-app = Flask(__name__, static_folder='checkin/build')
-api = Api(app)
+app = Flask(__name__, static_folder='../checkin/build')
 
-app.config["DEBUG"] = True
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve():
-    return "<p>Serve the react app through here.</p>"
+@app.route('/*')
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
-    app.run(threaded=True)
+    app.run(debug=True, use_reloader=True, threaded=True)

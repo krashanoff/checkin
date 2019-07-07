@@ -1,10 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom';
 import './App.css';
 import Start from '../Start/Start';
 import Results from '../Results/Results';
 import Checkin from '../Checkin/Checkin';
 import Admin from '../Admin/Admin';
+import Missing from '../Missing/Missing';
 
 function App() {
     return (
@@ -14,12 +15,13 @@ function App() {
                 <Link className='navLink' to='/admin'>Admin</Link>
             </div>
 
-            <div id='view'>
+            <Switch>
                 <Route exact path='/' component={Start} />
                 <Route path='/results' component={Results} />
                 <Route path='/checkin' component={Checkin} />
                 <Route path='/admin' component={() => <Admin masterPass={'2222'} />} />
-            </div>
+                <Route exact path='*' component={Missing} />
+            </Switch>
         </Router>
     );
 }

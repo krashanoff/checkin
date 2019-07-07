@@ -10,44 +10,13 @@ class Suggestions extends React.Component {
     constructor(props) {
         super(props);
 
-        this.lastname = props.lastName;
-
-        this.click = this.click.bind(this);
-    }
-
-    click(event) {
-        window.location.href = '/checkin?id=' + event.target.uid;
-    }
-
-    render() {
-        console.log('rendered');
-
-        var names = [];
-        // acquire data from API
-        const data = [
-            {'uid':20, 'lastName':'cat'},
-            {'uid':10, 'lastName':'dog'}
-        ];
-
-        data.forEach((entry) => {
-            names.push(<div className='suggestion' onClick={this.click} key={entry.uid}>{entry.lastName}</div>);
-        });
-
-        return (
-            // For each match, create a suggestion.
-            <div id='suggestions'>
-                {names}
-            </div>
-        );
-    }
-}
-
-class Start extends React.Component {
-    constructor(props) {
-        super(props);
-
+        // declare all necessary fields for parsing
         this.state = {
-            value: ''
+            value: '',
+            data: '',
+            ids: '',
+            lastNamesAll: '',
+            lastNamesVisible: ''
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -55,22 +24,57 @@ class Start extends React.Component {
 
     handleChange(event) {
         this.setState({value: event.target.value});
+
+        if (event.target.value === SEARCHMIN) {
+            // fetch data from the API
+            const data = [
+                {
+                    'Id': 0,
+                    'Name': 'string',
+                    'Description': 'string',
+                    'ContactIds': [
+                        0
+                    ]
+                }
+            ];
+        }
+
+        // Based on the current input, limit the number of visible results from
+        // previously parsed data. This is stored in state.lastNamesVisible.
+        // This limits our number of overall API requests per check-in.
     }
 
+    render() {
+        /* parse our current data to render the suggestions
+         *  - If duplicate last name entries, associate their ids to the same
+         *    last name.
+         */
+        var names = [];
+        this.state.lastNamesVisible.forEach((name) => {
+            names.push(<div className='suggestion' onClick={this.click} key={name.uid}>{name}</div>)
+        });
+
+        return(
+            <div id='suggestions'>
+                <div id='input'>
+                    <input type='text' name='name' value={this.state.value} onChange={this.handleChange} />
+                </div>
+                <div id='names'>
+                    {names}
+                </div>
+            </div>
+        );
+    }
+}
+
+class Start extends React.Component {
     render() {
         return (
             <div className='Start'>
                 <p>Please enter your last name:</p>
                 <form action='/results'>
-                    <input type='text' name='name' value={this.state.value} onChange={this.handleChange} />
+                    <Suggestions />
                 </form>
-                {
-                    this.state.value.length >= SEARCHMIN ?
-
-                    <Suggestions lastName={this.state.value} />
-
-                    : <div />
-                }
             </div>
         );
     }
