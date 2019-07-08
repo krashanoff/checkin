@@ -14,6 +14,7 @@ class Results extends React.Component {
         // if we are passed no ids, return a 404.
         if (typeof values.ids === "undefined")
             window.location.href = '/404';
+
         console.log(values.ids);
     }
 
@@ -21,7 +22,7 @@ class Results extends React.Component {
         return (
         <div className='results'>
             This is the results page, for if you had some search query that needed to get sent.
-            This time, we were passed the following IDs: {this.props.location.ids}.
+            This time, we were passed the following IDs: {this.props.location.state.ids}.
         </div>
         );
     }

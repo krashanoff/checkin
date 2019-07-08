@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 const SEARCHMIN = 3;
 
 /* TODO:
+ *  - Clean up the formatting of this entire file.
+ *  - Actually parse input as we go to request the proper query information.
  *  - Q: Ask if we are designing for pool members to check themselves in,
  *       or whether we are designing for lifeguards for it to be easier to
  *       check guests in.
@@ -27,7 +29,7 @@ class Suggestions extends React.Component {
         };
 
         this.handleChange = this.handleChange.bind(this);
-        this.click = this.click.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     /* handleChange
@@ -54,7 +56,7 @@ class Suggestions extends React.Component {
         // when we reach the minimum query length, we request
         // data from the API and begin our suggestions.
         if (event.target.value.length === SEARCHMIN) {
-            // fetch data from the API
+            // TODO: fetch data from the API
             this.setState({data : [
                 {
                     'Id': 0,
@@ -78,7 +80,7 @@ class Suggestions extends React.Component {
                 "Id": 20496,\
                 "Url": "string",\
                 "FirstName": "string",\
-                "LastName": "string",\
+                "LastName": "Krashanoff",\
                 "Organization": "string",\
                 "Email": "string",\
                 "DisplayName": "string",\
@@ -119,7 +121,7 @@ class Suggestions extends React.Component {
                 "Id": 99,\
                 "Url": "string",\
                 "FirstName": "string",\
-                "LastName": "string2",\
+                "LastName": "Cat",\
                 "Organization": "string",\
                 "Email": "string",\
                 "DisplayName": "string",\
@@ -160,7 +162,7 @@ class Suggestions extends React.Component {
                 "Id": 201,\
                 "Url": "string",\
                 "FirstName": "string",\
-                "LastName": "string",\
+                "LastName": "Krashanoff",\
                 "Organization": "string",\
                 "Email": "string",\
                 "DisplayName": "string",\
@@ -241,30 +243,44 @@ class Suggestions extends React.Component {
         });
     }
 
+    // TODO: Handle submission of the form better.
+    handleSubmit(event) {
+        event.preventDefault();
+        console.log('fired');
+    }
+
     render() {
         // parse our current data to render the suggestions
         var names = [];
         
         Array.from(this.state.lastNamesVisible).forEach( (name) => {
-            var uidContents = '';
+            var uidContents = [];
 
-            // for each name in the Id array, append it to the uid attribute.
-            for (var i = 0; i < name[0].length; i++)
-                if (i === 0)
-                    uidContents = name[0][i];
-                else
-                    uidContents += '+' + name[0][i];
+            // if we only have a single name, push a Link to the checkin page for that id.
+            if (name[0].length === 1) {
+                names.push(<Link to={{
+                    pathname: '/checkin',
+                    state: { id: name[0][0] }
+                }} className='suggestion' key={name[1]}>{name[1]}</Link>);
+            }
+            // otherwise:
+            else {
+                // for each name in the Id array, append it to the uid attribute.
+                name[0].forEach( (id) => {
+                    uidContents.push(id);
+                });
 
-            // create a new suggestion with uid information.
-            names.push(<Link to={{
-                pathname: '/results',
-                state: { ids: uidContents }
-            }} className='suggestion' uid={uidContents} key={name[1]}>{name[1]}</Link>);
+                // create a new suggestion Link with uid information.
+                names.push(<Link to={{
+                    pathname: '/results',
+                    state: { ids: uidContents }
+                }} className='suggestion' key={name[1]}>{name[1]}</Link>);
+            }
         });
 
         return(
             <div id='suggestions'>
-                <input type='text' name='name' placeholder='Please enter your last name...' value={this.state.value} onChange={this.handleChange} />
+                <input type='text' placeholder='Please enter your last name...' value={this.state.value} onChange={this.handleChange} />
                 <div id='names'>
                     {names}
                 </div>
@@ -277,7 +293,7 @@ class Start extends React.Component {
     render() {
         return (
             <div className='Start'>
-                <form action='/results'>
+                <form onSubmit={this.handleSubmit}>
                     <Suggestions />
                 </form>
             </div>
