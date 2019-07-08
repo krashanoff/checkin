@@ -249,8 +249,17 @@ class Start extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
 
+        // construct a concatenated array of the presently available ids and associated names
+        // to send to the results page.
+        var rw = [];
+        Array.from(this.state.lastNamesVisible).forEach( (tuple) => {
+            tuple[0].forEach( (id) => {
+                rw.push(id);
+            });
+        });
+
         this.setState({
-            redirectWith: this.state.lastNamesVisible[0]
+            redirectWith: rw
         });
     }
 

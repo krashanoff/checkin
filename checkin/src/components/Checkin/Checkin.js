@@ -10,6 +10,7 @@ class Checkin extends React.Component {
         return (
             <div className='checkin'>
                 Welcome, {this.props.location.state.id}!
+                THIS IS THE CHECK IN PAGE
             </div>
         );
     }

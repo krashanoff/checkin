@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import './Results.css';
 
 /* Results
@@ -15,6 +15,8 @@ class Results extends React.Component {
         // if we are missing props, or have no ids passed, then return the 404 page.
         if ((typeof values === 'undefined') || (typeof values.ids === "undefined"))
             window.location.href = '/404';
+
+        console.log(values.ids);
     }
 
     render() {
@@ -30,11 +32,27 @@ class Results extends React.Component {
             );
         }
 
+        // create table entries for each id we are passed.
+        var entries = [];
+        var LASTNAME = 'LAST NAME';  // TODO: IMPLEMENT THIS.
+        var FIRSTNAMES = 'FIRST NAME';
+        Array.from(this.props.location.state.ids).forEach( (id) => {
+            entries.push(
+                <tr className='contactEntry' key={id}>
+                    <td>{LASTNAME}</td>
+                    <td>{FIRSTNAMES}</td>
+                </tr>
+            );
+        });
+
         return (
-            <div className='results'>
-                This is the results page, for if you had some search query that needed to get sent.
-                This time, we were passed the following IDs: {this.props.location.state.ids}.
-            </div>
+            <table id='results'>
+                <tr>
+                    <th>Last Name</th>
+                    <th>First Name(s)</th>
+                </tr>
+                {entries}
+            </table>
         );
     }
 }
