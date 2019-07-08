@@ -1,6 +1,6 @@
 import React from 'react';
 import './Start.css';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 // dictates the minimum amount required to input before we
 // start parsing for suggestions.
@@ -22,7 +22,8 @@ class Start extends React.Component {
             value: '',
             data: [],
             lastNamesAll: [],
-            lastNamesVisible: []
+            lastNamesVisible: [],
+            redirectWith: []
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -240,33 +241,40 @@ class Start extends React.Component {
         });
     }
 
-    // TODO: Figure out how to handle redirects
+    /* handleSubmit
+     * On submission of the form, we set the state field 'redirectWith'
+     * to our currently visible names, and then force load the results
+     * page with the current data and names.
+     */
     handleSubmit(event) {
         event.preventDefault();
-        var ids = [];
-        Array.from(this.state.lastNamesVisible).forEach( (name) => {
-            name[0].forEach( (id) => {
-                ids.push(id);
-            });
+
+        this.setState({
+            redirectWith: this.state.lastNamesVisible[0]
         });
     }
 
     render() {
+        // if we have received the signal to redirect, simply redirect
+        // with all relevant results.
+        if (this.state.redirectWith.length !== 0)
+            return (<Redirect to={{
+                pathname: '/results',
+                state: {
+                    ids: this.state.redirectWith,
+                    data: this.state.data
+                }
+            }} />);
+
         // parse our current data to render the suggestions
         var names = [];
         
         Array.from(this.state.lastNamesVisible).forEach( (name) => {
-            var uidContents = [];
-            // for each name in the Id array, append it to the uid attribute.
-            name[0].forEach( (id) => {
-                uidContents.push(id);
-            });
-
             // create a new suggestion Link with uid information.
             names.push(<Link to={{
                 pathname: '/results',
                 state: {
-                    ids: uidContents,
+                    ids: name[0],
                     data: this.state.data
                 }
             }} className='suggestion' key={name[1]}>{name[1]}</Link>);
