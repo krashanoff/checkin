@@ -240,10 +240,15 @@ class Start extends React.Component {
         });
     }
 
-    // TODO: Handle submission of the form better.
+    // TODO: Figure out how to handle redirects
     handleSubmit(event) {
         event.preventDefault();
-        console.log('fired');
+        var ids = [];
+        Array.from(this.state.lastNamesVisible).forEach( (name) => {
+            name[0].forEach( (id) => {
+                ids.push(id);
+            });
+        });
     }
 
     render() {
@@ -252,38 +257,28 @@ class Start extends React.Component {
         
         Array.from(this.state.lastNamesVisible).forEach( (name) => {
             var uidContents = [];
+            // for each name in the Id array, append it to the uid attribute.
+            name[0].forEach( (id) => {
+                uidContents.push(id);
+            });
 
-            // if we only have a single name, push a Link to the checkin page for that id.
-            if (name[0].length === 1) {
-                names.push(<Link to={{
-                    pathname: '/checkin',
-                    state: { id: name[0][0] }
-                }} className='suggestion' key={name[1]}>{name[1]}</Link>);
-            }
-            // otherwise:
-            else {
-                // for each name in the Id array, append it to the uid attribute.
-                name[0].forEach( (id) => {
-                    uidContents.push(id);
-                });
-
-                // create a new suggestion Link with uid information.
-                names.push(<Link to={{
-                    pathname: '/results',
-                    state: { ids: uidContents }
-                }} className='suggestion' key={name[1]}>{name[1]}</Link>);
-            }
+            // create a new suggestion Link with uid information.
+            names.push(<Link to={{
+                pathname: '/results',
+                state: {
+                    ids: uidContents,
+                    data: this.state.data
+                }
+            }} className='suggestion' key={name[1]}>{name[1]}</Link>);
         });
 
         return(
-            <div id='suggestions'>
-                <form onSubmit={this.handleSubmit}>
-                    <input type='text' placeholder='Please enter your last name...' value={this.state.value} onChange={this.handleChange} />
-                    <div id='names'>
-                        {names}
-                    </div>
-                </form>
-            </div>
+            <form id='suggestions' onSubmit={this.handleSubmit}>
+                <input type='text' placeholder='Please enter your last name...' value={this.state.value} onChange={this.handleChange} />
+                <div id='names'>
+                    {names}
+                </div>
+            </form>
         );
     }
 };
