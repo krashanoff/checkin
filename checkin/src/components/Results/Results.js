@@ -9,6 +9,7 @@ import './Results.css';
 
  /* TODO:
   * Handle when ids is NULL
+  * Redirect when ids is of length 1
   */
 
 class Results extends React.Component {

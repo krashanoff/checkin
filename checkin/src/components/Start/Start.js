@@ -242,9 +242,7 @@ class Suggestions extends React.Component {
      * and the current state of the component.
      */
     click(event) {
-        // TODO: Write this.
-        const uid = event.target.getAttribute('uid');
-        console.log(uid);
+        window.location.href = '/results?ids=' + event.target.getAttribute('uid');
     }
 
     render() {
@@ -256,13 +254,11 @@ class Suggestions extends React.Component {
             var uidContents = '';
 
             // for each name in the Id array, append it to the uid attribute.
-            for (var i = 0; i < name[0].length; i++) {
+            for (var i = 0; i < name[0].length; i++)
                 if (i === 0)
                     uidContents = name[0][i];
                 else
                     uidContents += '+' + name[0][i];
-            }
-            console.log(uidContents);
 
             // create a new suggestion with uid information.
             names.push(<div className='suggestion' onClick={this.click} uid={uidContents} key={name[1]}>{name[1]}</div>);
