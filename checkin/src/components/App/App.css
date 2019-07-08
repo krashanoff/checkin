@@ -1,19 +1,14 @@
-body {
-    margin: 0;
-    padding: 0;
-}
-
 #nav {
     display: flex;
     width: 96%;
     padding: 2%;
-    background: #bae;
+    background: var(--background);
     flex-flow: row wrap;
     justify-content: space-between;
 }
 
 .navLink {
-    color: black;
+    color: var(--primary);
     font-size: 2em;
     text-decoration: none;
 }
