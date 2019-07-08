@@ -12,11 +12,8 @@ const SEARCHMIN = 3;
  *  - Q: Ask if we are designing for pool members to check themselves in,
  *       or whether we are designing for lifeguards for it to be easier to
  *       check guests in.
- *  - IDEA: Pass down the information queried from Suggestions to our
- *          results, checkin components. That is, pass the information
- *          as props. See: https://tylermcginnis.com/react-router-pass-props-to-link/
  */
-class Suggestions extends React.Component {
+class Start extends React.Component {
     constructor(props) {
         super(props);
 
@@ -280,25 +277,15 @@ class Suggestions extends React.Component {
 
         return(
             <div id='suggestions'>
-                <input type='text' placeholder='Please enter your last name...' value={this.state.value} onChange={this.handleChange} />
-                <div id='names'>
-                    {names}
-                </div>
-            </div>
-        );
-    }
-}
-
-class Start extends React.Component {
-    render() {
-        return (
-            <div className='Start'>
                 <form onSubmit={this.handleSubmit}>
-                    <Suggestions />
+                    <input type='text' placeholder='Please enter your last name...' value={this.state.value} onChange={this.handleChange} />
+                    <div id='names'>
+                        {names}
+                    </div>
                 </form>
             </div>
         );
     }
-}
+};
 
 export default Start;
