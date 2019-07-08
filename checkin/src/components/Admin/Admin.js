@@ -5,13 +5,14 @@ class Admin extends React.Component {
         super(props);
         
         this.masterPass = props.masterPass;
-        this.state = {pass: 'Please input PIN.'};
+        this.state = {pass: ''};
 
         this.handleChange = this.handleChange.bind(this);
         this.revealTable = this.revealTable.bind(this);
     }
 
     revealTable() {
+        // TODO: Implement the master table.
         console.log('1');
     }
 
@@ -26,7 +27,7 @@ class Admin extends React.Component {
         return (
         <div className='admin'>
             <div id='password'>
-                <input type='text' name='PIN' pattern='^\d{4}$' value={this.state.pass} onChange={this.handleChange} required />
+                <input type='text' name='PIN' placeholder='Please input PIN' pattern='^\d{4}$' value={this.state.pass} onChange={this.handleChange} required />
                 PASSWORD GOES HERE
             </div>
         </div>

@@ -22,12 +22,20 @@ class Suggestions extends React.Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
+    /* handleChange
+     * On change of the text field, if the field is of the proper length, then
+     * we 
+     */
     handleChange(event) {
         this.setState({value: event.target.value});
 
-        if (event.target.value === SEARCHMIN) {
+        // exit early if we have not met the proper length yet
+        if (event.target.value.length < SEARCHMIN)
+            return;
+
+        if (event.target.value.length === SEARCHMIN) {
             // fetch data from the API
-            const data = [
+            this.setState({data : [
                 {
                     'Id': 0,
                     'Name': 'string',
@@ -36,7 +44,153 @@ class Suggestions extends React.Component {
                         0
                     ]
                 }
-            ];
+            ]});
+
+            // populate the lastNamesAll field, mirroring its contents in the
+            // lastNamesVisible state field.
+            var names = [];
+
+            // below is an absolute mess of test data. It serves no other purpose.
+            // the brackets are for collapsing the code in your editor.
+            var sampleContactData = [];
+            {
+            sampleContactData.push(JSON.parse('{\
+                "Id": 0,\
+                "Url": "string",\
+                "FirstName": "string",\
+                "LastName": "string",\
+                "Organization": "string",\
+                "Email": "string",\
+                "DisplayName": "string",\
+                "ProfileLastUpdated": "2019-07-08",\
+                "MembershipLevel": {\
+                    "Id": 0,\
+                    "Url": "string",\
+                    "Name": "string"\
+                },\
+                "MembershipEnabled": true,\
+                "Status": "Active",\
+                "ExtendedMembershipInfo": {\
+                    "PendingMembershipOrderStatusType": "Invisible",\
+                    "PendingMembershipInvoice": {\
+                    "Id": 0,\
+                    "Url": "string"\
+                    },\
+                    "AllowedActions": [\
+                    {\
+                        "Id": 0,\
+                        "Url": "string",\
+                        "Name": "string"\
+                    }\
+                    ]\
+                },\
+                "IsAccountAdministrator": true,\
+                "TermsOfUseAccepted": true,\
+                "FieldValues": [\
+                    {\
+                    "FieldName": "string",\
+                    "SystemCode": "string",\
+                    "Value": {},\
+                    "CustomAccessLevel": "Public"\
+                    }\
+                ]\
+            }'));
+            sampleContactData.push(JSON.parse('{\
+                "Id": 0,\
+                "Url": "string",\
+                "FirstName": "string",\
+                "LastName": "string2",\
+                "Organization": "string",\
+                "Email": "string",\
+                "DisplayName": "string",\
+                "ProfileLastUpdated": "2019-07-08",\
+                "MembershipLevel": {\
+                    "Id": 0,\
+                    "Url": "string",\
+                    "Name": "string"\
+                },\
+                "MembershipEnabled": true,\
+                "Status": "Active",\
+                "ExtendedMembershipInfo": {\
+                    "PendingMembershipOrderStatusType": "Invisible",\
+                    "PendingMembershipInvoice": {\
+                    "Id": 0,\
+                    "Url": "string"\
+                    },\
+                    "AllowedActions": [\
+                    {\
+                        "Id": 0,\
+                        "Url": "string",\
+                        "Name": "string"\
+                    }\
+                    ]\
+                },\
+                "IsAccountAdministrator": true,\
+                "TermsOfUseAccepted": true,\
+                "FieldValues": [\
+                    {\
+                    "FieldName": "string",\
+                    "SystemCode": "string",\
+                    "Value": {},\
+                    "CustomAccessLevel": "Public"\
+                    }\
+                ]\
+            }'));
+            sampleContactData.push(JSON.parse('{\
+                "Id": 0,\
+                "Url": "string",\
+                "FirstName": "string",\
+                "LastName": "string",\
+                "Organization": "string",\
+                "Email": "string",\
+                "DisplayName": "string",\
+                "ProfileLastUpdated": "2019-07-08",\
+                "MembershipLevel": {\
+                    "Id": 0,\
+                    "Url": "string",\
+                    "Name": "string"\
+                },\
+                "MembershipEnabled": true,\
+                "Status": "Active",\
+                "ExtendedMembershipInfo": {\
+                    "PendingMembershipOrderStatusType": "Invisible",\
+                    "PendingMembershipInvoice": {\
+                    "Id": 0,\
+                    "Url": "string"\
+                    },\
+                    "AllowedActions": [\
+                    {\
+                        "Id": 0,\
+                        "Url": "string",\
+                        "Name": "string"\
+                    }\
+                    ]\
+                },\
+                "IsAccountAdministrator": true,\
+                "TermsOfUseAccepted": true,\
+                "FieldValues": [\
+                    {\
+                    "FieldName": "string",\
+                    "SystemCode": "string",\
+                    "Value": {},\
+                    "CustomAccessLevel": "Public"\
+                    }\
+                ]\
+            }'));
+            }
+
+            // get all last names and push to our names array
+            Array.from(sampleContactData).forEach( (contact) => {
+                names.push(contact.LastName);
+            });
+
+            // eliminate duplicate entries
+            for (var i = 0; i < names.length; i++)
+                for (var k = i + 1; k < names.length; k++)
+                    if (names[i] === names[k]) {
+                        names.splice(k);
+                        break;
+                    }
         }
 
         // Based on the current input, limit the number of visible results from
