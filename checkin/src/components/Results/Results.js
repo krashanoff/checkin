@@ -12,23 +12,30 @@ import './Results.css';
   */
 
 class Results extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            ids: ''
+        };
+    }
+
+    // sets the state to reflect the ids we were passed in the URL.
     componentDidMount() {
         console.log('entered the results page');
         const values = queryString.parse(this.props.location.search);
 
         if (typeof values.ids === "undefined")
             window.location.href = '/404';
-            
-        console.log('We were passed an argument to the URL of: ' + values.ids);
-        const all = values.ids.split('+');
-        for (var i = 0; i < all.length; i++)
-            console.log(all[i]);
+        
+        this.setState({ids: values.ids});
     }
 
     render() {
         return (
         <div className='results'>
             This is the results page, for if you had some search query that needed to get sent.
+            This time, we were passed the following IDs: {this.state.ids}.
         </div>
         );
     }

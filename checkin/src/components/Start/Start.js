@@ -50,15 +50,14 @@ class Suggestions extends React.Component {
          *    last name.
          */
         var names = [];
-        this.state.lastNamesVisible.forEach((name) => {
-            names.push(<div className='suggestion' onClick={this.click} key={name.uid}>{name}</div>)
-        });
+        for (var i = 0; i < this.state.lastNamesVisible.length; i++) {
+            const name = this.state.lastNamesVisible[i];
+            names.push(<div className='suggestion' onClick={this.click} key={name.uid}>{name}</div>);
+        }
 
         return(
             <div id='suggestions'>
-                <div id='input'>
-                    <input type='text' name='name' value={this.state.value} onChange={this.handleChange} />
-                </div>
+                <input type='text' name='name' placeholder='Please enter your last name...' value={this.state.value} onChange={this.handleChange} />
                 <div id='names'>
                     {names}
                 </div>
@@ -71,7 +70,6 @@ class Start extends React.Component {
     render() {
         return (
             <div className='Start'>
-                <p>Please enter your last name:</p>
                 <form action='/results'>
                     <Suggestions />
                 </form>

@@ -15,13 +15,15 @@ function App() {
                 <Link className='navLink' to='/admin'>Admin</Link>
             </div>
 
-            <Switch>
-                <Route exact path='/' component={Start} />
-                <Route path='/results' component={Results} />
-                <Route path='/checkin' component={Checkin} />
-                <Route path='/admin' component={() => <Admin masterPass={'2222'} />} />
-                <Route exact path='*' component={Missing} />
-            </Switch>
+            <div id='view'>
+                <Switch>
+                    <Route exact path='/' component={Start} />
+                    <Route path='/results' component={Results} />
+                    <Route path='/checkin' component={Checkin} />
+                    <Route path='/admin' component={() => <Admin masterPass={'2222'} />} />
+                    <Route exact path='*' component={Missing} />
+                </Switch>
+            </div>
         </Router>
     );
 }
