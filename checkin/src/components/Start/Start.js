@@ -6,8 +6,6 @@ import './Start.css';
 const SEARCHMIN = 3;
 
 /* TODO:
- *  - IDEA: Make the lastNames state fields of type pair<int[], string>,
- *          this way we can have our ids bound to each last name.
  *  - Q: Ask if we are designing for pool members to check themselves in,
  *       or whether we are designing for lifeguards for it to be easier to
  *       check guests in.
@@ -20,7 +18,6 @@ class Suggestions extends React.Component {
         this.state = {
             value: '',
             data: [],
-            ids: [],
             lastNamesAll: [],
             lastNamesVisible: []
         };
@@ -34,13 +31,23 @@ class Suggestions extends React.Component {
      * we 
      */
     handleChange(event) {
+        // update our state to match the input
         this.setState({value: event.target.value});
 
-        // exit early if we have not met the proper length yet
-        if (event.target.value.length < SEARCHMIN)
-            return;
+        // if we have not yet met the minimum query length,
+        // then remove visible suggestions.
+        if (event.target.length < SEARCHMIN) {
+            this.setState({
+                lastNamesVisible: []
+            });
 
-        // when we reach the minimum search query length, we request
+            return;
+        }
+
+        // used in almost every single part of the following code:
+        var names = [];
+
+        // when we reach the minimum query length, we request
         // data from the API and begin our suggestions.
         if (event.target.value.length === SEARCHMIN) {
             // fetch data from the API
@@ -57,14 +64,14 @@ class Suggestions extends React.Component {
 
             // populate the lastNamesAll field, mirroring its contents in the
             // lastNamesVisible state field.
-            var names = [];
+            names = [];
 
             // below is an absolute mess of test data. It serves no other purpose.
             // the brackets are for collapsing the code in your editor.
             var sampleContactData = [];
             {
             sampleContactData.push(JSON.parse('{\
-                "Id": 0,\
+                "Id": 20496,\
                 "Url": "string",\
                 "FirstName": "string",\
                 "LastName": "string",\
@@ -105,7 +112,7 @@ class Suggestions extends React.Component {
                 ]\
             }'));
             sampleContactData.push(JSON.parse('{\
-                "Id": 0,\
+                "Id": 99,\
                 "Url": "string",\
                 "FirstName": "string",\
                 "LastName": "string2",\
@@ -146,7 +153,7 @@ class Suggestions extends React.Component {
                 ]\
             }'));
             sampleContactData.push(JSON.parse('{\
-                "Id": 0,\
+                "Id": 201,\
                 "Url": "string",\
                 "FirstName": "string",\
                 "LastName": "string",\
@@ -188,15 +195,18 @@ class Suggestions extends React.Component {
             }'));
             }
 
-            // get all last names and push to our names array
+            // push the UID and the last name into the array.
+            // this functions similarly to pair<Id, LastName>.
             Array.from(sampleContactData).forEach( (contact) => {
-                names.push(contact.LastName);
+                names.push([ [contact.Id], contact.LastName]);
             });
 
-            // eliminate duplicate entries
+            // eliminate duplicate entries so that the end product is a list of
+            // unique names with associated Id arrays.
             for (var i = 0; i < names.length; i++) {
                 for (var k = i + 1; k < names.length; k++) {
-                    if (names[i] === names[k]) {
+                    if (names[i][1] === names[k][1]) {
+                        names[i][0].push(names[k][0][0]);
                         names.splice(k);
                         break;
                     }
@@ -208,19 +218,23 @@ class Suggestions extends React.Component {
                 lastNamesAll: names,
                 lastNamesVisible: names
             });
+
+            // exit on completion.
+            return;
         }
 
         // Based on the current input, limit the number of visible results from
         // previously parsed data. This is stored in state.lastNamesVisible.
         // This limits our number of overall API requests per check-in.
 
-        // for every last name we currently have available given the current input:
-        for (var i = 0; i < this.state.lastNamesAll.length; i++) {
-            // for every character in the name:
-            for (var k = 0; k < this.state.lastNamesAll[i].length; k++) {
-                // TODO: check that it is actually a suggestion.
-            }
-        }
+        // push only the names that have the current search as a substring.
+        names = [];
+        for (var i = 0; i < this.state.lastNamesAll.length; i++)
+            if (this.state.lastNamesAll[i][1].includes(event.target.value))
+                names.push(this.state.lastNamesAll[i]);
+        this.setState({
+            lastNamesVisible: names
+        });
     }
 
     /* click
@@ -236,12 +250,22 @@ class Suggestions extends React.Component {
     render() {
         // parse our current data to render the suggestions
         var names = [];
-        var i = 0;          // simply used for the key field.
         
         // TODO: Update so that uid is the actual associated uid information.
         Array.from(this.state.lastNamesVisible).forEach( (name) => {
-            names.push(<div className='suggestion' onClick={this.click} uid={name} key={'suggestion' + i}>{name}</div>);
-            i++;
+            var uidContents = '';
+
+            // for each name in the Id array, append it to the uid attribute.
+            for (var i = 0; i < name[0].length; i++) {
+                if (i === 0)
+                    uidContents = name[0][i];
+                else
+                    uidContents += '+' + name[0][i];
+            }
+            console.log(uidContents);
+
+            // create a new suggestion with uid information.
+            names.push(<div className='suggestion' onClick={this.click} uid={uidContents} key={name[1]}>{name[1]}</div>);
         });
 
         return(
