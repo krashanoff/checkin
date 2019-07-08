@@ -8,7 +8,7 @@
 }
 
 .navLink {
-    color: var(--primary);
+    color: var(--titlecolor);
     font-size: 2em;
     text-decoration: none;
 }

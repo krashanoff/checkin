@@ -3,8 +3,11 @@
  */
 
 :root {
-    --primary: #e6e6e6;
+    --titlecolor: #e6e6e6;
+    --black: #101010;
     --background: #7ea7d8;
+    --offwhite: #fefefe;
+    --darkeroffwhite: #f0f0f0;
 }
 
 body {
