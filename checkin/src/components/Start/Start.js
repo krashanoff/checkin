@@ -12,6 +12,7 @@ const SEARCHMIN = 3;
  *  - Q: Ask if we are designing for pool members to check themselves in,
  *       or whether we are designing for lifeguards for it to be easier to
  *       check guests in.
+ *  - FUNNEL DOWN THE API DATA AS WE GO.
  */
 class Start extends React.Component {
     constructor(props) {
@@ -21,6 +22,7 @@ class Start extends React.Component {
         this.state = {
             value: '',
             data: [],
+            dataVisible: [],
             lastNamesAll: [],
             lastNamesVisible: [],
             redirectWith: []

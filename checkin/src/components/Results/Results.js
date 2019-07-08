@@ -47,11 +47,15 @@ class Results extends React.Component {
 
         return (
             <table id='results'>
-                <tr>
-                    <th>Last Name</th>
-                    <th>First Name(s)</th>
-                </tr>
-                {entries}
+                <thead>
+                    <tr>
+                        <th>Last Name</th>
+                        <th>First Name(s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {entries}
+                </tbody>
             </table>
         );
     }
