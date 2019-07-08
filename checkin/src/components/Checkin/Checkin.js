@@ -2,25 +2,25 @@ import React from 'react';
 import './Checkin.css';
 import queryString from 'query-string';
 
-const API_KEY = process.env.WILDAPRICOT_KEY;
-
 class Checkin extends React.Component {
     constructor(props) {
         super(props);
 
-        this.userID = '';
+        var uid = queryString.parse(this.props.location.search).id;
+
+        this.state = {
+            id: uid
+        };
     }
 
     componentDidMount() {
-        this.setState({userID: queryString.parse(this.props.location.search).id});
-        console.log('entered the checkin page. Arguments passed to the URL are ' + this.state.userID);
-        console.log(API_KEY);
+        console.log('entered the checkin page. Arguments passed to the URL are ' + this.state.id);
     }
 
-    render() {        
+    render() {
         return (
             <div className='checkin'>
-                Welcome, {this.state.userID}!
+                Welcome, {this.state.id}!
             </div>
         );
     }

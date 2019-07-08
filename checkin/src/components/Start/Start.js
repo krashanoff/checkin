@@ -9,6 +9,9 @@ const SEARCHMIN = 3;
  *  - Q: Ask if we are designing for pool members to check themselves in,
  *       or whether we are designing for lifeguards for it to be easier to
  *       check guests in.
+ *  - IDEA: Pass down the information queried from Suggestions to our
+ *          results, checkin components. That is, pass the information
+ *          as props.
  */
 class Suggestions extends React.Component {
     constructor(props) {
@@ -242,7 +245,17 @@ class Suggestions extends React.Component {
      * and the current state of the component.
      */
     click(event) {
-        window.location.href = '/results?ids=' + event.target.getAttribute('uid');
+        var uid = event.target.getAttribute('uid');
+        
+        // if we are passed only a single uid, we redirect to check-in.
+        if (uid.split('+').length === 1)
+        {
+            window.location.href = '/checkin?id=' + uid;
+            return;
+        }
+
+        // if we are passed multiple, we redirect to the results page.
+        window.location.href = '/results?ids=' + uid;
     }
 
     render() {
