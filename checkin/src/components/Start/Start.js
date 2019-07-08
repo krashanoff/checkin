@@ -1,5 +1,6 @@
 import React from 'react';
 import './Start.css';
+import { Link } from 'react-router-dom';
 
 // dictates the minimum amount required to input before we
 // start parsing for suggestions.
@@ -11,7 +12,7 @@ const SEARCHMIN = 3;
  *       check guests in.
  *  - IDEA: Pass down the information queried from Suggestions to our
  *          results, checkin components. That is, pass the information
- *          as props.
+ *          as props. See: https://tylermcginnis.com/react-router-pass-props-to-link/
  */
 class Suggestions extends React.Component {
     constructor(props) {
@@ -240,29 +241,10 @@ class Suggestions extends React.Component {
         });
     }
 
-    /* click
-     * Redirect the user to the proper page based on which entry they click
-     * and the current state of the component.
-     */
-    click(event) {
-        var uid = event.target.getAttribute('uid');
-        
-        // if we are passed only a single uid, we redirect to check-in.
-        if (uid.split('+').length === 1)
-        {
-            window.location.href = '/checkin?id=' + uid;
-            return;
-        }
-
-        // if we are passed multiple, we redirect to the results page.
-        window.location.href = '/results?ids=' + uid;
-    }
-
     render() {
         // parse our current data to render the suggestions
         var names = [];
         
-        // TODO: Update so that uid is the actual associated uid information.
         Array.from(this.state.lastNamesVisible).forEach( (name) => {
             var uidContents = '';
 
@@ -274,7 +256,10 @@ class Suggestions extends React.Component {
                     uidContents += '+' + name[0][i];
 
             // create a new suggestion with uid information.
-            names.push(<div className='suggestion' onClick={this.click} uid={uidContents} key={name[1]}>{name[1]}</div>);
+            names.push(<Link to={{
+                pathname: '/results',
+                state: { ids: uidContents }
+            }} className='suggestion' uid={uidContents} key={name[1]}>{name[1]}</Link>);
         });
 
         return(
