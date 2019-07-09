@@ -6,23 +6,20 @@ NOTES:
 """
 
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__,
             static_folder = "../checkin/build/static",
             template_folder = "../checkin/build")
-app.config["CORS_HEADERS"] = "Content-Type"
 
 # Protect our API so that only the server can access it.
-cors = CORS(app, resources={r"/api/*": {"origins": "localhost"}})
+cors = CORS(app, resources=r"/api/*", origins=["127.0.0.1"])
 
 # All the API routes
 @app.route("/api/cat", methods=["GET"])
 def cat():
     return "CAT!"
-
-@app.route("/api/")
 
 # Render our SPA
 @app.route("/")
