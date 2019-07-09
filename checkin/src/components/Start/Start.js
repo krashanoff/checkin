@@ -46,6 +46,7 @@ class Start extends React.Component {
             this.setState({
                 lastNamesVisible: []
             });
+            console.log('cleared names');
 
             return;
         }

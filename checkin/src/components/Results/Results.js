@@ -34,7 +34,7 @@ class Results extends React.Component {
 
         // create table entries for each id we are passed.
         var entries = [];
-        var LASTNAME = 'LAST NAME';  // TODO: IMPLEMENT THIS.
+        var LASTNAME = 'LAST NAME';  // TODO: ADD LINKS TO EACH ENTRY.
         var FIRSTNAMES = 'FIRST NAME';
         Array.from(this.props.location.state.ids).forEach( (id) => {
             entries.push(
