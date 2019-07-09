@@ -10,8 +10,17 @@ from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__,
-            static_folder = "../checkin/build/static",
-            template_folder = "../checkin/build")
+            static_folder = '../checkin/build/static',
+            template_folder = '../checkin/build')
+app.config.update(
+    DEBUG = True,
+    SECRET_KEY = 'dev',
+    DATABASE = './checkin.sqlite'
+)
+
+# Add the database.
+from . import db
+db.init_app(app)
 
 # Protect our API so that only the server can access it.
 cors = CORS(app, resources=r"/api/*", origins=["127.0.0.1"])
