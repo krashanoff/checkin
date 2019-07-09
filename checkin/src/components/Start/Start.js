@@ -34,7 +34,10 @@ class Start extends React.Component {
 
     /* handleChange
      * On change of the text field, if the field is of the proper length, then
-     * we 
+     * we query for relevant names that match the search term.
+     * By retaining relevant data, we are able to sustain about four "rewrites"
+     * of the search term per minute without exceeding the quota outlined by the
+     * free tier of the Wild Apricot API.
      */
     handleChange(event) {
         // update our state to match the input

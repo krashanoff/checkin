@@ -1,14 +1,8 @@
-"""
-NOTES:
-* Right now there is some weird behavior going on with the flask app
-  when rendering the start page. All suggestions appear immediately
-  with no regard to the current input. Will require further research.
-"""
-
 import os
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 
+# Set up our app.
 app = Flask(__name__,
             static_folder = '../checkin/build/static',
             template_folder = '../checkin/build')
@@ -26,12 +20,14 @@ db.init_app(app)
 cors = CORS(app, resources=r"/api/*", origins=["127.0.0.1"])
 
 """
-All the API routes
+API
+Below is the code supplying all relevant information, etc. for the webapp.
 """
 
 # Set the PIN of the user specified, if no PIN already exists.
 @app.route("/api/setpin", methods=["POST"])
 def setPin():
+    print(request.form)
     info = [request.form['id'], request.form['pin']]
     
     for entry in info:
@@ -39,10 +35,16 @@ def setPin():
             return 'ERROR: Missing field %s' % entry
     
     db = get_db()
+
+    c = db.cursor()
+    c.execute('SELECT id, pin FROM users')
+    query = c.fetchall()
+    for x in query:
+        print(x)
     
     db.execute(
         'INSERT INTO users (id, pin) VALUES (?, ?)',
-        (username, generate_password_hash(pin))
+        (info[0], generate_password_hash(info[1]))
     )
     db.commit()
 
@@ -64,7 +66,7 @@ def react():
     return render_template("index.html")
 
 # 404
-@app.route('/<path:path>')
+@app.route("/<path:path>")
 def missing(path):
     return '404: %s does not exist.' % path
 
