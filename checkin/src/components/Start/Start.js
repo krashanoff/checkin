@@ -38,11 +38,12 @@ class Start extends React.Component {
      */
     handleChange(event) {
         // update our state to match the input
-        this.setState({value: event.target.value});
+        const input = event.target.value;
+        this.setState({value: input});
 
         // if we have not yet met the minimum query length,
         // then remove visible suggestions.
-        if (event.target.length < SEARCHMIN) {
+        if (input.length < SEARCHMIN) {
             this.setState({
                 lastNamesVisible: []
             });
@@ -56,7 +57,7 @@ class Start extends React.Component {
 
         // when we reach the minimum query length, we request
         // data from the API and begin our suggestions.
-        if (event.target.value.length === SEARCHMIN) {
+        if (input.length === SEARCHMIN) {
             // TODO: fetch data from the API
             this.setState({data : [
                 {
@@ -237,7 +238,7 @@ class Start extends React.Component {
         // push only the names that have the current search as a substring.
         names = [];
         for (var i = 0; i < this.state.lastNamesAll.length; i++)
-            if (this.state.lastNamesAll[i][1].includes(event.target.value))
+            if (this.state.lastNamesAll[i][1].toUpperCase().includes(input.toUpperCase()))
                 names.push(this.state.lastNamesAll[i]);
         this.setState({
             lastNamesVisible: names

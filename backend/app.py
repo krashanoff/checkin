@@ -15,7 +15,7 @@ app = Flask(__name__,
 app.config.update(
     DEBUG = True,
     SECRET_KEY = 'dev',
-    DATABASE = './checkin.sqlite'
+    DATABASE = './users.sqlite'
 )
 
 # Add the database.
