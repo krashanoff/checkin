@@ -2,8 +2,10 @@
  * Color schemes, global resets, etc.
  */
 
+ @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
 :root {
-    --titlecolor: #e6e6e6;
+    --titlecolor: #f6f6f6;
     --black: #101010;
     --background: #7ea7d8;
     --offwhite: #fafafa;
@@ -14,4 +16,5 @@ body {
     margin: 0;
     padding: 0;
     color: var(--primary);
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
 }
