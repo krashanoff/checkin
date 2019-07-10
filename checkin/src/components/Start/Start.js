@@ -204,6 +204,47 @@ class Start extends React.Component {
                     }\
                 ]\
             }'));
+            sampleContactData.push(JSON.parse('{\
+                "Id": 22,\
+                "Url": "string",\
+                "FirstName": "string",\
+                "LastName": "Mar",\
+                "Organization": "string",\
+                "Email": "string",\
+                "DisplayName": "string",\
+                "ProfileLastUpdated": "2019-07-08",\
+                "MembershipLevel": {\
+                    "Id": 0,\
+                    "Url": "string",\
+                    "Name": "string"\
+                },\
+                "MembershipEnabled": true,\
+                "Status": "Active",\
+                "ExtendedMembershipInfo": {\
+                    "PendingMembershipOrderStatusType": "Invisible",\
+                    "PendingMembershipInvoice": {\
+                    "Id": 0,\
+                    "Url": "string"\
+                    },\
+                    "AllowedActions": [\
+                    {\
+                        "Id": 0,\
+                        "Url": "string",\
+                        "Name": "string"\
+                    }\
+                    ]\
+                },\
+                "IsAccountAdministrator": true,\
+                "TermsOfUseAccepted": true,\
+                "FieldValues": [\
+                    {\
+                    "FieldName": "string",\
+                    "SystemCode": "string",\
+                    "Value": {},\
+                    "CustomAccessLevel": "Public"\
+                    }\
+                ]\
+            }'));
             }
 
             // push the UID and the last name into the array.
@@ -224,7 +265,7 @@ class Start extends React.Component {
                 }
             }
 
-            names.sort((a, b) => { return b.length > a.length || b > a; });
+            names.sort();
 
             // update the current state to reflect the new information
             this.setState({
@@ -246,7 +287,7 @@ class Start extends React.Component {
             if (name[1].toUpperCase().includes(input.toUpperCase()))
                 names.push(name);
         });
-        names.sort((a, b) => { return b.length > a.length || b > a; });
+        names.sort();
 
         this.setState({
             lastNamesVisible: names

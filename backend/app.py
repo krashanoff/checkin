@@ -48,10 +48,6 @@ def login():
     else:
         print("POST")
 
-@app.route("/api/admin", methods=["GET"])
-def admin():
-    return 'render the login page here.'
-
 # Render our SPA
 @app.route("/")
 def react():

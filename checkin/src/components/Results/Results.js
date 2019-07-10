@@ -51,7 +51,7 @@ class Results extends React.Component {
             entries.push(
                 <tr className='contactEntry' key={id}>
                     <td><Link to={{
-                        pathname:'/pinput',
+                        pathname:'/checkin',
                         state: {
                             id: id
                         }

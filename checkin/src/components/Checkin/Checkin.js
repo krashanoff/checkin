@@ -1,6 +1,14 @@
 import React from 'react';
 import './Checkin.css';
 
+function Checkbox(props) {
+    return <td><input className='checkbox' /></td>;
+}
+
+function Counter(props) {
+    return 'COUNTER';
+}
+
  // TODO: Consider creating a new component to handle the table.
  // TODO: Add their street number for confirmation.
  // TODO: Use <div>s instead of tables for formatting.
@@ -21,6 +29,7 @@ class Checkin extends React.Component {
         // sample data below
         this.state = {
             id: '25',
+            lastName: 'SAMPLE LAST NAME',
             parentNames: ['SampleFirst1 SampleLast1', 'SampleFirst2 SampleLast2'],
             childNames: ['Sample1', 'Sample2'],
             caregiverNames: ['CaregiverFirst1 CaregiverLast1']
@@ -47,40 +56,48 @@ class Checkin extends React.Component {
     render() {
         var parents = [];
         var children = [];
-        var caregivers = [];
+        var i = 0;
 
         Array.from(this.state.parentNames).forEach( (parent) => {
             console.log(parent);
             parents.push(
-                <tr>
+                <tr key={i}>
                     <td>{parent}</td>
-                    <td>Check</td>
+                    <Checkbox />
                 </tr>
             );
+            i++;
         });
 
         Array.from(this.state.childNames).forEach( (child) => {
             console.log(child);
             children.push(
-                <tr>
+                <tr key={i}>
                     <td>{child}</td>
-                    <td>Check</td>
+                    <Checkbox />
                 </tr>
             );
+            i++;
         });
 
         Array.from(this.state.caregiverNames).forEach( (caregiver) => {
             console.log(caregiver);
+            parents.push(
+                <tr key={i}>
+                    <td>{caregiver}</td>
+                    <Checkbox />
+                </tr>
+            );
+            i++;
         });
 
         return (
             <div id='checkin'>
                 <table className='namesTable' id='parents'>
+                    <caption>Adults</caption>
                     <thead>
-                        <caption>Parents</caption> 
                         <tr>
                             <th>Name</th>
-                            <th>BUTTON</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -88,39 +105,33 @@ class Checkin extends React.Component {
                     </tbody>
                 </table>
 
-                {
-                // Render the child table only if child names are passed.
-                this.state.childNames.length > 0 ?
-
-                <table className='namesTable' id='children'>
-                    <thead>
-                        <caption>Children</caption>
-                        <th>Children</th>
-                    </thead>
+                <table>
                     <tbody>
-                        {children}
+                        <tr>
+                            <td>Adult Guests</td>
+                            <td><Counter /></td>
+                        </tr>
+                        <tr>
+                            <td>Child Guests</td>
+                            <td><Counter /></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <table className='namesTable' id='children'>
+                    <caption>Children</caption>
+                    <tbody>
+                        {
+                        // Render the child table only if child names are passed.
+                        // TODO: Make this look nicer.
+                        this.state.childNames.length > 0 ?
+
+                        children : <div />
+                        }
                     </tbody>
                 </table>
 
-                : <table />
-                }
-                
-                {
-                // Similarly, render the caregiver table only if caregivers are passed
-                // as an option.
-                this.state.caregiverNames.length > 0 ?
-
-                <table className='namesTable' id='caregivers'>
-                    <thead>
-                        <caption>Other Caregivers</caption>
-                        <th>Caregivers</th>
-                    </thead>
-                </table>
-
-                : <table />
-                }
-
-                <input onSubmit={this.log} type='button' value='Check In' id='checkinButton' />
+                <input onSubmit={this.log} type='button' value='Check-In' id='checkinButton' />
             </div>
         );
     }

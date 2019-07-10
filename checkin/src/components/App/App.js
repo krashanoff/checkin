@@ -4,7 +4,6 @@ import './App.css';
 import Start from '../Start/Start';
 import Results from '../Results/Results';
 import Checkin from '../Checkin/Checkin';
-import Admin from '../Admin/Admin';
 import Missing from '../Missing/Missing';
 
 class App extends React.Component {
@@ -21,7 +20,6 @@ class App extends React.Component {
                         <Route exact path='/' component={Start} />
                         <Route path='/results' component={Results} />
                         <Route path='/checkin' component={Checkin} />
-                        <Route path='/admin' component={() => <Admin masterPass={'2222'} />} />
                         <Route exact path='*' component={Missing} />
                     </Switch>
                 </div>

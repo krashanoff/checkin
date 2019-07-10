@@ -1,23 +1,40 @@
-/* placeholder for the time being */
-.checkin {
+/* Checkbox styling */
+input.checkbox {
+    height: 3em;
+    width: 3em;
+    margin: 1em;
+    background: black;
+    border-radius: 10px;
+}
+
+/* Checkin webpage styling */
+
+#checkin {
     display: flex;
-    width: 100%;
-    height: 100%;
     flex-flow: row wrap;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: baseline;
     align-content: space-around;
+    width: 95%;
+    height: 95%;
+    padding: 2.5%;
     font-size: 3em;
 }
 
 .namesTable {
-    width: 50%;
-    height: 100%;
+    width: 45%;
+    border: thin solid black;
 }
 
 #checkinButton {
-    background: #0F9D58;
+    background: var(--background);
     color: var(--offwhite);
-    border-radius: 3px;
+    padding: 5%;
+    border-radius: 80px;
     font-size: 3em;
+    transition: box-shadow .3s linear;
+}
+#checkinButton:hover, #checkinButton:active {
+    box-shadow: var(--defaultboxshadow);
+    background: var(--activeBlue);
 }
