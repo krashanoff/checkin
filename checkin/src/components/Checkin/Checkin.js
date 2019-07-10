@@ -3,6 +3,7 @@ import './Checkin.css';
 
  // TODO: Consider creating a new component to handle the table.
  // TODO: Add their street number for confirmation.
+ // TODO: Use <div>s instead of tables for formatting.
 class Checkin extends React.Component {
     constructor(props) {
         super(props);
@@ -17,11 +18,12 @@ class Checkin extends React.Component {
         //     || (typeof values.caregiverNames === 'undefined'))
         //     window.location.href = '/404';
 
+        // sample data below
         this.state = {
-            id: '',
-            parentNames: [],
-            childNames: [],
-            caregiverNames: []
+            id: '25',
+            parentNames: ['SampleFirst1 SampleLast1', 'SampleFirst2 SampleLast2'],
+            childNames: ['Sample1', 'Sample2'],
+            caregiverNames: ['CaregiverFirst1 CaregiverLast1']
         };
 
         // this.setState = {
@@ -49,10 +51,22 @@ class Checkin extends React.Component {
 
         Array.from(this.state.parentNames).forEach( (parent) => {
             console.log(parent);
+            parents.push(
+                <tr>
+                    <td>{parent}</td>
+                    <td>Check</td>
+                </tr>
+            );
         });
 
         Array.from(this.state.childNames).forEach( (child) => {
             console.log(child);
+            children.push(
+                <tr>
+                    <td>{child}</td>
+                    <td>Check</td>
+                </tr>
+            );
         });
 
         Array.from(this.state.caregiverNames).forEach( (caregiver) => {
@@ -65,12 +79,12 @@ class Checkin extends React.Component {
                     <thead>
                         <caption>Parents</caption> 
                         <tr>
-                            <th>First Name</th>
+                            <th>Name</th>
                             <th>BUTTON</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr></tr>
+                        {parents}
                     </tbody>
                 </table>
 
@@ -83,6 +97,9 @@ class Checkin extends React.Component {
                         <caption>Children</caption>
                         <th>Children</th>
                     </thead>
+                    <tbody>
+                        {children}
+                    </tbody>
                 </table>
 
                 : <table />

@@ -27,12 +27,12 @@
     display: block;
     width: 100%;
     z-index: 5;
+    text-decoration: none;
     padding: .2em;
     color: var(--black);
     font-size: 2em;
     transition: all .3s linear;
 }
-
 .suggestion:hover {
     background: var(--darkeroffwhite);
 }

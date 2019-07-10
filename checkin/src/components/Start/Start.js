@@ -224,6 +224,8 @@ class Start extends React.Component {
                 }
             }
 
+            names.sort((a, b) => { return b.length > a.length || b > a; });
+
             // update the current state to reflect the new information
             this.setState({
                 lastNamesAll: names,
@@ -240,9 +242,12 @@ class Start extends React.Component {
 
         // push only the names that have the current search as a substring.
         names = [];
-        for (var i = 0; i < this.state.lastNamesAll.length; i++)
-            if (this.state.lastNamesAll[i][1].toUpperCase().includes(input.toUpperCase()))
-                names.push(this.state.lastNamesAll[i]);
+        Array.from(this.state.lastNamesAll).forEach( (name) => {
+            if (name[1].toUpperCase().includes(input.toUpperCase()))
+                names.push(name);
+        });
+        names.sort((a, b) => { return b.length > a.length || b > a; });
+
         this.setState({
             lastNamesVisible: names
         });

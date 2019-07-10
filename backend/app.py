@@ -28,33 +28,7 @@ Below is the code supplying all relevant information, etc. for the webapp.
 def cat():
     return 'Cat!'
 
-# Set the PIN of the user specified, if no PIN already exists.
-@app.route("/api/setpin", methods=["POST"])
-def setPin():
-    print(request.form)
-    info = [request.form['id'], request.form['pin']]
-    
-    for entry in info:
-        if not entry:
-            return 'ERROR: Missing field %s' % entry
-    
-    db = get_db()
-
-    c = db.cursor()
-    c.execute('SELECT id, pin FROM users')
-    query = c.fetchall()
-    for x in query:
-        print(x)
-    
-    db.execute(
-        'INSERT INTO users (id, pin) VALUES (?, ?)',
-        (info[0], generate_password_hash(info[1]))
-    )
-    db.commit()
-
-    return 'SUCCESS'
-
-# Retrieve the relevant info about a contact from the API directly.
+# Retrieve the relevant info about a contact and their family from the API directly.
 @app.route("/api/contactinfo", methods=["GET"])
 def contactInfo():
     id = request.form['id']
@@ -63,6 +37,20 @@ def contactInfo():
         print('ERROR: No user ID was provided.')
 
     return id
+
+# Provides a login page for the admin table.
+@app.route("/api/login", methods=["GET", "POST"])
+def login():
+    # Serve the login page.
+    if request.method == "GET":
+        print("GET")
+    # Verify the login.
+    else:
+        print("POST")
+
+@app.route("/api/admin", methods=["GET"])
+def admin():
+    return 'render the login page here.'
 
 # Render our SPA
 @app.route("/")
