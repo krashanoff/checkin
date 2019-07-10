@@ -24,6 +24,10 @@ API
 Below is the code supplying all relevant information, etc. for the webapp.
 """
 
+@app.route("/api/cat", methods=["GET"])
+def cat():
+    return 'Cat!'
+
 # Set the PIN of the user specified, if no PIN already exists.
 @app.route("/api/setpin", methods=["POST"])
 def setPin():
@@ -56,7 +60,7 @@ def contactInfo():
     id = request.form['id']
     
     if not id:
-        flash('ERROR: No user ID was provided.')
+        print('ERROR: No user ID was provided.')
 
     return id
 

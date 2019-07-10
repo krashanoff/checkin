@@ -4,6 +4,7 @@ import './App.css';
 import Start from '../Start/Start';
 import Results from '../Results/Results';
 import Checkin from '../Checkin/Checkin';
+import Setpin from '../Setpin/Setpin';
 import Admin from '../Admin/Admin';
 import Missing from '../Missing/Missing';
 
@@ -20,6 +21,7 @@ function App() {
                     <Route exact path='/' component={Start} />
                     <Route path='/results' component={Results} />
                     <Route path='/checkin' component={Checkin} />
+                    <Route path='/setpin' component={Setpin} />
                     <Route path='/admin' component={() => <Admin masterPass={'2222'} />} />
                     <Route exact path='*' component={Missing} />
                 </Switch>

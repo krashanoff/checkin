@@ -43,26 +43,19 @@ class Results extends React.Component {
             );
         }
 
-        // if we are to redirect, then do so.
-        if (this.state.props[0] === 1) {
-            return (
-                <Redirect to={{
-                    pathname: this.state.redir[1],
-                    state: {
-                        id: this.state.redir[0]
-                    }
-                }} />
-            )
-        }
-
         // create table entries for each id we are passed.
         var entries = [];
-        var LASTNAME = 'LAST NAME';  // TODO: ADD LINKS TO EACH ENTRY.
+        var LASTNAME = 'LAST NAME';
         var FIRSTNAMES = 'FIRST NAME';
         Array.from(this.props.location.state.ids).forEach( (id) => {
             entries.push(
-                <tr className='contactEntry' index={id} key={id}>
-                    <td>{LASTNAME}</td>
+                <tr className='contactEntry' key={id}>
+                    <td><Link to={{
+                        pathname:'/pinput',
+                        state: {
+                            id: id
+                        }
+                    }}>{LASTNAME}</Link></td>
                     <td>{FIRSTNAMES}</td>
                 </tr>
             );
