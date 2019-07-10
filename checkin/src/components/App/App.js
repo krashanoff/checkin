@@ -8,26 +8,28 @@ import Setpin from '../Setpin/Setpin';
 import Admin from '../Admin/Admin';
 import Missing from '../Missing/Missing';
 
-function App() {
-    return (
-        <Router>
-            <div id='nav'>
-                <Link className='navLink' to='/'>SHHA Check-In System</Link>
-                <Link className='navLink' to='/admin'>Admin</Link>
-            </div>
+class App extends React.Component {
+    render() {
+        return (
+            <Router>
+                <div id='nav'>
+                    <Link className='navLink' to='/'>SHHA Check-In System</Link>
+                    <Link className='navLink' to='/admin'>Admin</Link>
+                </div>
 
-            <div id='view'>
-                <Switch>
-                    <Route exact path='/' component={Start} />
-                    <Route path='/results' component={Results} />
-                    <Route path='/checkin' component={Checkin} />
-                    <Route path='/setpin' component={Setpin} />
-                    <Route path='/admin' component={() => <Admin masterPass={'2222'} />} />
-                    <Route exact path='*' component={Missing} />
-                </Switch>
-            </div>
-        </Router>
-    );
+                <div id='view'>
+                    <Switch>
+                        <Route exact path='/' component={Start} />
+                        <Route path='/results' component={Results} />
+                        <Route path='/checkin' component={Checkin} />
+                        <Route path='/setpin' component={Setpin} />
+                        <Route path='/admin' component={() => <Admin masterPass={'2222'} />} />
+                        <Route exact path='*' component={Missing} />
+                    </Switch>
+                </div>
+            </Router>
+        );
+    }
 }
 
 export default App;
