@@ -63,10 +63,11 @@ class Start extends React.Component {
         if (input.length === SEARCHMIN) {
             // get data from the API.
             try {
-                const response = await axios.get('http://127.0.0.1:5000/api/search?lastName=' + input);
+                const response = await axios.get('http://localhost:5000/api/search?lastName=' + input);
                 this.setState({ data: response.data });
                 console.log(response.data);
             } catch (error) {
+                // TODO: Improve error handling.
                 alert("FAILED TO RECEIVE DATA");
             }
 
@@ -92,6 +93,10 @@ class Start extends React.Component {
                 }
             }
 
+            // Use a sorting function designed specifically for the pair data type
+            // we are using.
+            names.sort( (pairA, pairB) => { return pairA[1] > pairB[1]; });
+
             // update the current state to reflect the new information
             this.setState({
                 lastNamesAll: names,
@@ -112,7 +117,7 @@ class Start extends React.Component {
             if (name[1].toUpperCase().includes(input.toUpperCase()))
                 names.push(name);
         });
-        names.sort();
+        names.sort( (pairA, pairB) => { return pairA[1] > pairB[1]; });
 
         this.setState({
             lastNamesVisible: names

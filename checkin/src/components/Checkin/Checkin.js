@@ -9,6 +9,9 @@ function Entry(props) {
     return <tr><td>{props.name}</td><td><Checkbox /></td></tr>;
 }
 
+/* Counter
+ * A component that counts positive integers.
+ */
 class Counter extends React.Component {
     constructor(props) {
         super(props);
@@ -21,8 +24,12 @@ class Counter extends React.Component {
     }
 
     handleChange = (e) => {
-        if (e.target.id === 'minus')
+        if (e.target.id === 'minus') {
+            if (this.state.value === 0)
+                return;
+
             this.setState({value: this.state.value - 1});
+        }
         else
             this.setState({value: this.state.value + 1});
     }
@@ -47,9 +54,10 @@ class Checkin extends React.Component {
 
         const values = this.props.location.state;
 
+        // validate the state passed to our page.
         if ((typeof values === 'undefined')
             || (typeof values.id === 'undefined')
-            || (typeof values.data === 'undefined'))
+            || (typeof values.contact === 'undefined'))
             window.location.href = '/404';
 
         this.state = {
@@ -69,31 +77,25 @@ class Checkin extends React.Component {
     }
 
     render() {
-        var parents = [];
+        var adults = [];
         var children = [];
         var i = 0;
 
-        Array.from(this.state.contact.accountFirst).forEach( (parent) => {
-            console.log(parent);
-            parents.push(
-                <Entry key={i} name={parent} />
-            );
+        adults.push(<Entry name={String(this.state.contact.accountFirst + ' ' + this.state.contact.accountLast)} key={i} />);
+        i++;
+
+        if (typeof this.state.contact.altFirst !== 'undefined' && typeof this.state.contact.altLast !== 'undefined') {
+            adults.push(<Entry name={String(this.state.contact.altFirst + ' ' + this.state.contact.altLast)} key={i} />);
+            i++;
+        }
+
+        Array.from(this.state.contact.caregivers).forEach( (caregiverName) => {
+            adults.push(<Entry name={caregiverName} key={i} />);
             i++;
         });
 
-        Array.from(this.state.childNames).forEach( (child) => {
-            console.log(child);
-            children.push(
-                <Entry key={i} name={child} />
-            );
-            i++;
-        });
-
-        Array.from(this.state.caregiverNames).forEach( (caregiver) => {
-            console.log(caregiver);
-            parents.push(
-                <Entry key={i} name={caregiver} />
-            );
+        Array.from(this.state.contact.children).forEach( (childName) => {
+            children.push(<Entry name={childName} key={i} />);
             i++;
         });
 
@@ -107,7 +109,7 @@ class Checkin extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {parents}
+                        {adults}
                     </tbody>
                 </table>
 
@@ -130,7 +132,7 @@ class Checkin extends React.Component {
                         {
                         // Render the child table only if child names are passed.
                         // TODO: Make this look nicer.
-                        this.state.childNames.length > 0 ?
+                        children.length > 0 ?
 
                         children : <div />
                         }

@@ -88,10 +88,10 @@ def search():
                 filteredResults[i].update({ 'houseNumber': int(field.Value) })
 
             if "Spouse / Partners First Name" == field.FieldName and field.Value != "":
-                filteredResults[i].update({ 'spouseFirst': field.Value })
+                filteredResults[i].update({ 'altFirst': field.Value })
             
             if "Spouse / Partners Last Name" == field.FieldName and field.Value != "":
-                filteredResults[i].update({ 'spouseLast': field.Value })
+                filteredResults[i].update({ 'altLast': field.Value })
             
             if "Designated Caregiver First Last Name" in field.FieldName and field.Value != "":
                 key = str('caregiver' + str(caregiverCount) + 'Name')
@@ -100,7 +100,7 @@ def search():
             if "Child's First Name & (Year of Birth)" in field.FieldName and field.Value != "":
                 key = str('child' + str(childCount) + 'Name')
                 filteredResults[i]['children'].append(field.Value)
-
+        
     # Finally, return all of our data as a JSON object to the client.                    
     return jsonify(filteredResults)
 
