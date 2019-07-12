@@ -35,23 +35,36 @@ Below is the code supplying all relevant information, etc. for the webapp.
 # Searches the database for members whose last name contains the query.
 @app.route("/api/searchMembers", methods=["GET"])
 def searchMembers():
-    test = ''
-    i = 0
 
-    params = {
-        '$filter': r"'Status' eq 'Active'",
+    if 'lastName' not in request.args:
+        return "ERROR: No lastName provided for query."
+
+    # NOTE: This only checks whether the request has a SUBSTRING of the last name.
+    filterString = r"Status eq 'Active' AND 'Group participation' eq 'Pool Members' AND substringof(LastName, '" + str(request.args['lastName']) + r"')"
+
+    params = '?' + urllib.parse.urlencode({
+        '$filter': filterString,
         '$top': '10',
         '$sort': 'Name asc',
         '$async': 'false'
-    }
-    param = '?' + urllib.parse.urlencode(params)
+    })
     
-    results = api.execute_request("/v2.1/accounts/" + os.environ['WA_ID'] + "/contacts" + param)
-    
-    # Print out with formatting.
+    results = api.execute_request("/v2.1/accounts/" + os.environ['WA_ID'] + "/contacts" + params)
+
+    # Mess of a script to print out the names of pool members.
+    # I'm 90% sure the above filter works, but I'm leaving this here just in case.
+    test = ''
     for idx, item in enumerate(results.Contacts):
-        test += str(item.FirstName + ' ' + item.LastName + ' ' + item.Status) + '<br />'
-        if item.FirstName == "Carolina":
+        test += str(item.FirstName + ' ' + item.LastName + ': ')
+        for a in item.FieldValues:
+            if a.FieldName == "Group participation":
+                for b in a.Value:
+                    if b == "Pool Members":
+                        test += 'Pool member'
+                    else:
+                        test += 'Not member'
+        test += '<br />'
+        if idx == 0:
             for a in item.FieldValues:
                 print(a.FieldName + ' ' + str(a.Value))
 
