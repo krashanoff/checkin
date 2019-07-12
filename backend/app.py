@@ -32,25 +32,74 @@ API
 Below is the code supplying all relevant information, etc. for the webapp.
 """
 
-# Searches the database for members whose last name contains the query.
+# Searches the database for members whose last names start with the query.
 @app.route("/api/searchMembers", methods=["GET"])
 def searchMembers():
 
     if 'lastName' not in request.args:
         return "ERROR: No lastName provided for query."
 
-    # NOTE: This only checks whether the request has a SUBSTRING of the last name.
-    filterString = r"Status eq 'Active' AND 'Group participation' eq 'Pool Members' AND substringof(LastName, '" + str(request.args['lastName']) + r"')"
+    """
+    NOTE: This only checks whether the request has a SUBSTRING of the last name.
+    This is because the API provided by Wild Apricot lacks the ability to search through a specific field.
+    As a result, this function of the API simply filters the results after the fact.
+    """
+
+    searchQuery = str(request.args['lastName'])
+
+    # Compose the filter string that we need to get our desired search. Then, run the search.
+    filterString = r"Status eq 'Active' AND 'Group participation' eq 'Pool Members' AND substringof(LastName, '" + searchQuery + r"')"
 
     params = '?' + urllib.parse.urlencode({
         '$filter': filterString,
-        '$top': '10',
+        '$top': '50',
         '$sort': 'Name asc',
         '$async': 'false'
     })
-    
+
     results = api.execute_request("/v2.1/accounts/" + os.environ['WA_ID'] + "/contacts" + params)
 
+    # Pick out only the names that *start* with the search query.
+    funneled = []
+
+    for contact in results.Contacts:
+        if str(contact.LastName).upper().startswith(searchQuery.upper()):
+            funneled.append(contact)
+
+    # Parse each name for relevant information.
+    filteredResults = [ {} ]
+
+    for i, contact in enumerate(funneled):
+
+        # Append relevant contact information.
+        filteredResults.append( {} )
+        filteredResults[i].update({ 'accountFirst': contact.FirstName, 'accountLast': contact.LastName })
+        filteredResults[i].update({'caregivers': [] })
+        filteredResults[i].update({'children': [] })
+        
+        # Big switch/case statement to catch relevant information.
+        for field in contact.FieldValues:
+
+            caregiverCount = 0
+            childCount = 0
+
+            if "Spouse / Partners First Name" == field.FieldName and field.Value != "":
+                filteredResults[i].update({ 'spouseFirst': field.Value })
+            
+            if "Spouse / Partners Last Name" == field.FieldName and field.Value != "":
+                filteredResults[i].update({ 'spouseLast': field.Value })
+            
+            if "Designated Caregiver First Last Name" in field.FieldName and field.Value != "":
+                key = str('caregiver' + str(caregiverCount) + 'Name')
+                filteredResults[i]['caregivers'].append(field.Value)
+
+            if "Child's First Name & (Year of Birth)" in field.FieldName and field.Value != "":
+                key = str('child' + str(childCount) + 'Name')
+                filteredResults[i]['children'].append(field.Value)
+
+    # Finally, return all of our data as a JSON object to the client.                    
+    return jsonify(filteredResults)
+    
     # Mess of a script to print out the names of pool members.
     # I'm 90% sure the above filter works, but I'm leaving this here just in case.
     test = ''
@@ -59,16 +108,18 @@ def searchMembers():
         for a in item.FieldValues:
             if a.FieldName == "Group participation":
                 for b in a.Value:
-                    if b == "Pool Members":
+                    if b.Label == "Pool Members":
                         test += 'Pool member'
+                        break
                     else:
-                        test += 'Not member'
+                        test += '<bold>ERROR</bold> NOT POOL MEMBER'
         test += '<br />'
         if idx == 0:
             for a in item.FieldValues:
-                print(a.FieldName + ' ' + str(a.Value))
-
+                print(a.FieldName)
     return test
+
+    return 'hi'
 
 # Provides a login page for the admin table.
 @app.route("/api/login", methods=["GET", "POST"])
