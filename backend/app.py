@@ -32,15 +32,30 @@ API
 Below is the code supplying all relevant information, etc. for the webapp.
 """
 
-# Retrieve the relevant info about a contact and their family from the API directly.
-@app.route("/api/contactinfo", methods=["GET"])
-def contactInfo():
-    id = request.form['id']
-    
-    if not id:
-        print('ERROR: No user ID was provided.')
+# Searches the database for members whose last name contains the query.
+@app.route("/api/searchMembers", methods=["GET"])
+def searchMembers():
+    test = ''
+    i = 0
 
-    return id
+    params = {
+        '$filter': r"'Status' eq 'Active'",
+        '$top': '10',
+        '$sort': 'Name asc',
+        '$async': 'false'
+    }
+    param = '?' + urllib.parse.urlencode(params)
+    
+    results = api.execute_request("/v2.1/accounts/" + os.environ['WA_ID'] + "/contacts" + param)
+    
+    # Print out with formatting.
+    for idx, item in enumerate(results.Contacts):
+        test += str(item.FirstName + ' ' + item.LastName + ' ' + item.Status) + '<br />'
+        if item.FirstName == "Carolina":
+            for a in item.FieldValues:
+                print(a.FieldName + ' ' + str(a.Value))
+
+    return test
 
 # Provides a login page for the admin table.
 @app.route("/api/login", methods=["GET", "POST"])
@@ -51,6 +66,10 @@ def login():
     # Verify the login.
     else:
         print("POST")
+
+"""
+WEBPAGES
+"""
 
 # Render our SPA
 @app.route("/")
