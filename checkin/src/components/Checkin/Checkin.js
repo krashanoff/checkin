@@ -1,9 +1,13 @@
 import React from 'react';
 import './Checkin.css';
 
-function Checkbox(props) {
-    return <input className='checkbox' />;
-}
+class Checkbox extends React.Component {
+    render() {
+        return (
+            <input className='checkbox' />
+        );
+    }
+};
 
 function Entry(props) {
     return <tr><td>{props.name}</td><td><Checkbox /></td></tr>;
@@ -24,7 +28,7 @@ class Counter extends React.Component {
     }
 
     handleChange = (e) => {
-        if (e.target.id === 'minus') {
+        if (e.target.className === 'minus') {
             if (this.state.value === 0)
                 return;
 
@@ -37,13 +41,13 @@ class Counter extends React.Component {
     render() {
         return(
             <div className='counter'>
-                <button type='button' id='minus' onClick={this.handleChange}>-</button>
-                <p>{this.state.value}</p>
-                <button type='button' id='plus' onClick={this.handleChange}>+</button>
+                <button type='button' className='minus' onClick={this.handleChange}>-</button>
+                <button type='button' className='count'>{this.state.value}</button>
+                <button type='button' className='plus' onClick={this.handleChange}>+</button>
             </div>
         );
     }
-}
+};
 
  // TODO: Consider creating a new component to handle the table.
  // TODO: Add their street number for confirmation.
@@ -69,8 +73,8 @@ class Checkin extends React.Component {
     }
 
     /* log()
-     * Logs the checkin with proper date, time, etc. to the server, where further
-     * processing is carried out.
+     * Sends a POST request to the API with our relevant data, which the
+     * server then logs.
      */
     log = (e) => {
         console.log(e);
@@ -139,7 +143,7 @@ class Checkin extends React.Component {
                     </tbody>
                 </table>
 
-                <input onSubmit={this.log} type='button' value='Check-In' id='checkinButton' />
+                <input onClick={this.log} type='button' value='Check-In' id='checkinButton' />
             </div>
         );
     }

@@ -6,6 +6,13 @@ from flask_cors import CORS
 from . import db
 from . import WaApi
 
+""" TODO:
+* Known issue: There are some contacts whose entries are completely
+empty in the database. This creates the issue that we have blank or
+undefined pieces of information in our search results or check-in
+page.
+"""
+
 # Set up our app.
 app = Flask(__name__,
             static_folder = '../checkin/build/static',
@@ -29,10 +36,13 @@ api.authenticate_with_contact_credentials(os.environ['WA_USERNAME'], os.environ[
 
 """
 API
-Below is the code supplying all relevant information, etc. for the webapp.
 """
 
 # Searches the database for members whose last names start with the query.
+# TODO: Handle the potential cases of inconsistencies in data:
+#   - Children have last names listed
+#   - Children do not have their birth years in parentheses
+#   - Children have two first names
 @app.route("/api/search", methods=["GET"])
 def search():
     # Catch a lack of search query.
@@ -40,7 +50,7 @@ def search():
         return "ERROR: No lastName provided for query."
 
     """
-    NOTE: This only checks whether the request has a SUBSTRING of the last name.
+    NOTE: This query only checks whether the request has a SUBSTRING of the last name.
     This is because the API provided by Wild Apricot lacks the ability to search through a specific field.
     As a result, this function of the API simply filters the results after the fact.
     """
@@ -52,7 +62,7 @@ def search():
 
     params = '?' + urllib.parse.urlencode({
         '$filter': filterString,
-        '$top': '50',
+        '$top': '20',
         '$sort': 'Name asc',
         '$async': 'false'
     })
@@ -104,9 +114,24 @@ def search():
     # Finally, return all of our data as a JSON object to the client.                    
     return jsonify(filteredResults)
 
+"""
+Expects two pieces of JSON: the original contact returned
+by /api/search, and the contact containing only the fields
+for the members checking in. It uses these in tandem to log
+the check-in as though it were a difference between the two
+(think `git diff HEAD~ > change.patch`).
+"""
 @app.route("/api/log", methods=["POST"])
 def log():
-    return 'logging page here.'
+    # Catch missing parameters.
+    if 'original' not in request.args or 'modified' not in request.args:
+        return 'ERROR: Missing arguments.'
+
+    # Acquire our original and modified contacts.
+    original = request.args['original']
+    mod = request.args['modified']
+
+    return 'Check-in logged.'
 
 # Provides a login page for the admin table.
 @app.route("/api/login", methods=["GET", "POST"])
@@ -114,7 +139,8 @@ def login():
     # Serve the login page.
     if request.method == "GET":
         print("GET")
-    # Verify the login.
+
+    # Verify the login then redirect with token.
     else:
         print("POST")
 

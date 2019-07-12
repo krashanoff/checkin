@@ -4,7 +4,7 @@ class Missing extends React.Component {
     render() {
         return(
             <div className='404'>
-                MISSING PAGE
+                <h1>MISSING PAGE</h1>
             </div>
         );
     }

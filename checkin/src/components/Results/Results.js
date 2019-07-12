@@ -31,7 +31,8 @@ class Results extends React.Component {
                 <Redirect to={{
                     pathname: '/checkin',
                     state: {
-                        id: this.props.location.state.ids[0]
+                        id: this.props.location.state.ids[0],
+                        contact: this.props.location.state.data[0]
                     }
                 }} />
             );
@@ -52,7 +53,7 @@ class Results extends React.Component {
                                 }
                             }}>{contact.accountLast}</Link></td>
                             <td>{contact.accountFirst}</td>
-                            <td>{contact.spouseFirst}</td>
+                            <td>{contact.altFirst}</td>
                         </tr>
                     );
                 }

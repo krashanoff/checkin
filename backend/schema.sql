@@ -1,5 +1,7 @@
 DROP TABLE IF EXISTS log;
 
 CREATE TABLE log (
-    ID INTEGER NOT NULL
+    datetime DATETIME,
+    id MEDIUMINT,
+    guestsPresent LONGTEXT
 );

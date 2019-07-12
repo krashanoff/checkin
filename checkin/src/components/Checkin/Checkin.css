@@ -1,7 +1,7 @@
 /* Checkbox styling */
-input.checkbox {
-    height: 3em;
-    width: 3em;
+.checkbox {
+    height: 3rem;
+    width: 3rem;
     margin: 1em;
     background: black;
     border-radius: 10px;
@@ -13,27 +13,40 @@ input.checkbox {
     width: max-content;
     flex-flow: row wrap;
     align-items: baseline;
-    border: thin solid black;
 }
 
 .counter button {
-    height: 4em;
-    width: 4em;
+    height: 4rem;
+    width: 4rem;
+    border: none;
+    padding: 2%;
+    text-align: center;
+    text-decoration: none;
+    font-size: .75em;
+    transition: background .3s linear;
 }
 
-.counter p {
-    margin: 0;
+.count {
+    background: var(--offwhite);
 }
 
-#minus {
-    background: red;
+.minus {
+    background: #FFAB91;
 }
-#plus {
-    background: green;
+
+.minus:hover {
+    background: #FF8A65;
+}
+
+.plus {
+    background: #A5D6A7;
+}
+
+.plus:hover {
+    background: #81C784;
 }
 
 /* Checkin webpage styling */
-
 #checkin {
     display: flex;
     flex-flow: row wrap;
@@ -55,7 +68,7 @@ input.checkbox {
     background: var(--background);
     color: var(--offwhite);
     padding: 5%;
-    border-radius: 80px;
+    border-radius: 50px;
     font-size: 3em;
     transition: box-shadow .3s linear, background .3s linear;
 }
