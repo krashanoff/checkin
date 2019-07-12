@@ -8,12 +8,13 @@
     width: 100%;
     height: 3em;
     padding: .2em;
-    border-radius: .15em;
-    transition: box-shadow .3s linear;
+    border: none;
+    border-bottom: thin solid black;
+    transition: border-bottom .1s linear;
     font-size: 2em;
 }
-#suggestions input:focus, input:hover {
-    box-shadow: var(--defaultboxshadow);
+#suggestions input:focus {
+    border-bottom: solid blue;
 }
 
 #names * {

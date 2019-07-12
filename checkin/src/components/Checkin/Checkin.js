@@ -2,11 +2,36 @@ import React from 'react';
 import './Checkin.css';
 
 function Checkbox(props) {
-    return <td><input className='checkbox' /></td>;
+    return <input className='checkbox' />;
 }
 
-function Counter(props) {
-    return 'COUNTER';
+class Counter extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            value: 0
+        };
+
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleChange = (e) => {
+        if (e.target.id === 'minus')
+            this.setState({value: this.state.value - 1});
+        else
+            this.setState({value: this.state.value + 1});
+    }
+
+    render() {
+        return(
+            <div className='counter'>
+                <button type='button' id='minus' onClick={this.handleChange}>-</button>
+                <p>{this.state.value}</p>
+                <button type='button' id='plus' onClick={this.handleChange}>+</button>
+            </div>
+        );
+    }
 }
 
  // TODO: Consider creating a new component to handle the table.
@@ -63,7 +88,7 @@ class Checkin extends React.Component {
             parents.push(
                 <tr key={i}>
                     <td>{parent}</td>
-                    <Checkbox />
+                    <td><Checkbox /></td>
                 </tr>
             );
             i++;
@@ -74,7 +99,7 @@ class Checkin extends React.Component {
             children.push(
                 <tr key={i}>
                     <td>{child}</td>
-                    <Checkbox />
+                    <td><Checkbox /></td>
                 </tr>
             );
             i++;
@@ -85,7 +110,7 @@ class Checkin extends React.Component {
             parents.push(
                 <tr key={i}>
                     <td>{caregiver}</td>
-                    <Checkbox />
+                    <td><Checkbox /></td>
                 </tr>
             );
             i++;
@@ -105,7 +130,7 @@ class Checkin extends React.Component {
                     </tbody>
                 </table>
 
-                <table>
+                <table className='namesTable' id='guests'>
                     <tbody>
                         <tr>
                             <td>Adult Guests</td>
