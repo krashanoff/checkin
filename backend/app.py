@@ -21,7 +21,7 @@ db.init_app(app)
 
 # Protect our API so that only the server can access it.
 cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost"}})
-app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization']
+app.config['CORS_HEADERS'] = ['Content-Type']
 
 # Set up our API client, then validate with contact credentials.
 api = WaApi.WaApiClient(os.environ['WA_CLIENT_ID'], os.environ['WA_CLIENT_SECRET'])
@@ -33,9 +33,9 @@ Below is the code supplying all relevant information, etc. for the webapp.
 """
 
 # Searches the database for members whose last names start with the query.
-@app.route("/api/searchMembers", methods=["GET"])
-def searchMembers():
-
+@app.route("/api/search", methods=["GET"])
+def search():
+    # Catch a lack of search query.
     if 'lastName' not in request.args:
         return "ERROR: No lastName provided for query."
 
@@ -67,21 +67,25 @@ def searchMembers():
             funneled.append(contact)
 
     # Parse each name for relevant information.
-    filteredResults = [ {} ]
+    filteredResults = []
 
     for i, contact in enumerate(funneled):
 
         # Append relevant contact information.
-        filteredResults.append( {} )
+        filteredResults.append( {} )        
+        filteredResults[i].update({ 'id': contact.Id })
         filteredResults[i].update({ 'accountFirst': contact.FirstName, 'accountLast': contact.LastName })
-        filteredResults[i].update({'caregivers': [] })
-        filteredResults[i].update({'children': [] })
+        filteredResults[i].update({ 'caregivers': [] })
+        filteredResults[i].update({ 'children': [] })
         
         # Big switch/case statement to catch relevant information.
         for field in contact.FieldValues:
 
             caregiverCount = 0
             childCount = 0
+
+            if "House # Only" == field.FieldName and field.Value != "":
+                filteredResults[i].update({ 'houseNumber': int(field.Value) })
 
             if "Spouse / Partners First Name" == field.FieldName and field.Value != "":
                 filteredResults[i].update({ 'spouseFirst': field.Value })
@@ -99,27 +103,6 @@ def searchMembers():
 
     # Finally, return all of our data as a JSON object to the client.                    
     return jsonify(filteredResults)
-    
-    # Mess of a script to print out the names of pool members.
-    # I'm 90% sure the above filter works, but I'm leaving this here just in case.
-    test = ''
-    for idx, item in enumerate(results.Contacts):
-        test += str(item.FirstName + ' ' + item.LastName + ': ')
-        for a in item.FieldValues:
-            if a.FieldName == "Group participation":
-                for b in a.Value:
-                    if b.Label == "Pool Members":
-                        test += 'Pool member'
-                        break
-                    else:
-                        test += '<bold>ERROR</bold> NOT POOL MEMBER'
-        test += '<br />'
-        if idx == 0:
-            for a in item.FieldValues:
-                print(a.FieldName)
-    return test
-
-    return 'hi'
 
 # Provides a login page for the admin table.
 @app.route("/api/login", methods=["GET", "POST"])
