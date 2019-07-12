@@ -1,6 +1,7 @@
 import React from 'react';
 import './Start.css';
 import { Link, Redirect } from 'react-router-dom';
+const axios = require('axios');
 
 // dictates the minimum amount required to input before we
 // start parsing for suggestions.
@@ -9,10 +10,6 @@ const SEARCHMIN = 3;
 /* TODO:
  *  - Clean up the formatting of this entire file.
  *  - Actually parse input as we go to request the proper query information.
- *  - Q: Ask if we are designing for pool members to check themselves in,
- *       or whether we are designing for lifeguards for it to be easier to
- *       check guests in.
- *  - FUNNEL DOWN THE API DATA AS WE GO.
  */
 class Start extends React.Component {
     constructor(props) {
@@ -35,11 +32,13 @@ class Start extends React.Component {
     /* handleChange
      * On change of the text field, if the field is of the proper length, then
      * we query for relevant names that match the search term.
-     * By retaining relevant data, we are able to sustain about four "rewrites"
-     * of the search term per minute without exceeding the quota outlined by the
-     * free tier of the Wild Apricot API.
+     * The function is async as we must wait for the server response before any
+     * search suggestions may be made.
+     * TODO: We are getting weird behavior here that shouldn't be happening. Search
+     * suggestions persist after deleting so that the word is shorter than our
+     * SEARCHMIN.
      */
-    handleChange(event) {
+    async handleChange(event) {
         // update our state to match the input
         const input = event.target.value;
         this.setState({value: input});
@@ -61,196 +60,23 @@ class Start extends React.Component {
         // when we reach the minimum query length, we request
         // data from the API and begin our suggestions.
         if (input.length === SEARCHMIN) {
-            // TODO: fetch data from the API
-            this.setState({data : [
-                {
-                    'Id': 0,
-                    'Name': 'string',
-                    'Description': 'string',
-                    'ContactIds': [
-                        0
-                    ]
-                }
-            ]});
+            // get data from the API.
+            try {
+                const response = await axios.get('http://localhost:5000/api/search?lastName=' + input);
+                this.setState({ data: response.data });
+                console.log(response.data);
+            } catch (error) {
+                alert("FAILED TO RECEIVE DATA");
+            }
 
             // populate the lastNamesAll field, mirroring its contents in the
             // lastNamesVisible state field.
             names = [];
 
-            // below is an absolute mess of test data. It serves no other purpose.
-            // the brackets are for collapsing the code in your editor.
-            var sampleContactData = [];
-            {
-            sampleContactData.push(JSON.parse('{\
-                "Id": 20496,\
-                "Url": "string",\
-                "FirstName": "string",\
-                "LastName": "Martin",\
-                "Organization": "string",\
-                "Email": "string",\
-                "DisplayName": "string",\
-                "ProfileLastUpdated": "2019-07-08",\
-                "MembershipLevel": {\
-                    "Id": 0,\
-                    "Url": "string",\
-                    "Name": "string"\
-                },\
-                "MembershipEnabled": true,\
-                "Status": "Active",\
-                "ExtendedMembershipInfo": {\
-                    "PendingMembershipOrderStatusType": "Invisible",\
-                    "PendingMembershipInvoice": {\
-                    "Id": 0,\
-                    "Url": "string"\
-                    },\
-                    "AllowedActions": [\
-                    {\
-                        "Id": 0,\
-                        "Url": "string",\
-                        "Name": "string"\
-                    }\
-                    ]\
-                },\
-                "IsAccountAdministrator": true,\
-                "TermsOfUseAccepted": true,\
-                "FieldValues": [\
-                    {\
-                    "FieldName": "string",\
-                    "SystemCode": "string",\
-                    "Value": {},\
-                    "CustomAccessLevel": "Public"\
-                    }\
-                ]\
-            }'));
-            sampleContactData.push(JSON.parse('{\
-                "Id": 99,\
-                "Url": "string",\
-                "FirstName": "string",\
-                "LastName": "Mar",\
-                "Organization": "string",\
-                "Email": "string",\
-                "DisplayName": "string",\
-                "ProfileLastUpdated": "2019-07-08",\
-                "MembershipLevel": {\
-                    "Id": 0,\
-                    "Url": "string",\
-                    "Name": "string"\
-                },\
-                "MembershipEnabled": true,\
-                "Status": "Active",\
-                "ExtendedMembershipInfo": {\
-                    "PendingMembershipOrderStatusType": "Invisible",\
-                    "PendingMembershipInvoice": {\
-                    "Id": 0,\
-                    "Url": "string"\
-                    },\
-                    "AllowedActions": [\
-                    {\
-                        "Id": 0,\
-                        "Url": "string",\
-                        "Name": "string"\
-                    }\
-                    ]\
-                },\
-                "IsAccountAdministrator": true,\
-                "TermsOfUseAccepted": true,\
-                "FieldValues": [\
-                    {\
-                    "FieldName": "string",\
-                    "SystemCode": "string",\
-                    "Value": {},\
-                    "CustomAccessLevel": "Public"\
-                    }\
-                ]\
-            }'));
-            sampleContactData.push(JSON.parse('{\
-                "Id": 201,\
-                "Url": "string",\
-                "FirstName": "string",\
-                "LastName": "Martian",\
-                "Organization": "string",\
-                "Email": "string",\
-                "DisplayName": "string",\
-                "ProfileLastUpdated": "2019-07-08",\
-                "MembershipLevel": {\
-                    "Id": 0,\
-                    "Url": "string",\
-                    "Name": "string"\
-                },\
-                "MembershipEnabled": true,\
-                "Status": "Active",\
-                "ExtendedMembershipInfo": {\
-                    "PendingMembershipOrderStatusType": "Invisible",\
-                    "PendingMembershipInvoice": {\
-                    "Id": 0,\
-                    "Url": "string"\
-                    },\
-                    "AllowedActions": [\
-                    {\
-                        "Id": 0,\
-                        "Url": "string",\
-                        "Name": "string"\
-                    }\
-                    ]\
-                },\
-                "IsAccountAdministrator": true,\
-                "TermsOfUseAccepted": true,\
-                "FieldValues": [\
-                    {\
-                    "FieldName": "string",\
-                    "SystemCode": "string",\
-                    "Value": {},\
-                    "CustomAccessLevel": "Public"\
-                    }\
-                ]\
-            }'));
-            sampleContactData.push(JSON.parse('{\
-                "Id": 22,\
-                "Url": "string",\
-                "FirstName": "string",\
-                "LastName": "Mar",\
-                "Organization": "string",\
-                "Email": "string",\
-                "DisplayName": "string",\
-                "ProfileLastUpdated": "2019-07-08",\
-                "MembershipLevel": {\
-                    "Id": 0,\
-                    "Url": "string",\
-                    "Name": "string"\
-                },\
-                "MembershipEnabled": true,\
-                "Status": "Active",\
-                "ExtendedMembershipInfo": {\
-                    "PendingMembershipOrderStatusType": "Invisible",\
-                    "PendingMembershipInvoice": {\
-                    "Id": 0,\
-                    "Url": "string"\
-                    },\
-                    "AllowedActions": [\
-                    {\
-                        "Id": 0,\
-                        "Url": "string",\
-                        "Name": "string"\
-                    }\
-                    ]\
-                },\
-                "IsAccountAdministrator": true,\
-                "TermsOfUseAccepted": true,\
-                "FieldValues": [\
-                    {\
-                    "FieldName": "string",\
-                    "SystemCode": "string",\
-                    "Value": {},\
-                    "CustomAccessLevel": "Public"\
-                    }\
-                ]\
-            }'));
-            }
-
             // push the UID and the last name into the array.
-            // this functions similarly to pair<Id, LastName>.
-            Array.from(sampleContactData).forEach( (contact) => {
-                names.push([ [contact.Id], contact.LastName]);
+            // this functions similarly to pair<Id[], LastName>.
+            this.state.data.forEach( (contact) => {
+                names.push([ [contact.id], contact.accountLast ]);
             });
 
             // eliminate duplicate entries so that the end product is a list of
@@ -264,8 +90,6 @@ class Start extends React.Component {
                     }
                 }
             }
-
-            names.sort();
 
             // update the current state to reflect the new information
             this.setState({

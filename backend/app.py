@@ -20,8 +20,8 @@ app.config.update(
 db.init_app(app)
 
 # Protect our API so that only the server can access it.
-cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost"}})
-app.config['CORS_HEADERS'] = ['Content-Type']
+cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:*"}})
+app.config['CORS_HEADERS'] = ['Content-Type', 'Access-Control-Allow-Origin']
 
 # Set up our API client, then validate with contact credentials.
 api = WaApi.WaApiClient(os.environ['WA_CLIENT_ID'], os.environ['WA_CLIENT_SECRET'])
