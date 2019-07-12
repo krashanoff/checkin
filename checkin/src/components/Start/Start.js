@@ -11,6 +11,8 @@ const SEARCHMIN = 3;
  *  - Clean up the formatting of this entire file.
  *  - Actually parse input as we go to request the proper query information.
  *  - Set catchalls for when we read this.state.data.
+ *  - Associate each Link with the contact of concern, not just the entire block
+ *    of data we initially retrieve.
  */
 class Start extends React.Component {
     constructor(props) {
@@ -23,7 +25,8 @@ class Start extends React.Component {
             dataVisible: [],
             lastNamesAll: [],
             lastNamesVisible: [],
-            redirectWith: []
+            redirectWith: [],
+            searchConducted: ''
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -48,9 +51,10 @@ class Start extends React.Component {
         // then remove visible suggestions.
         if (input.length < SEARCHMIN) {
             this.setState({
-                lastNamesVisible: []
+                lastNamesVisible: [],
+                searchConducted: 'false'
             });
-            console.log('cleared names');
+            console.log('cleared names and reset');
 
             return;
         }
@@ -60,7 +64,7 @@ class Start extends React.Component {
 
         // when we reach the minimum query length, we request
         // data from the API and begin our suggestions.
-        if (input.length === SEARCHMIN) {
+        if (this.state.searchConducted === 'false' && input.length === SEARCHMIN) {
             // get data from the API.
             try {
                 const response = await axios.get('http://localhost:5000/api/search?lastName=' + input);
@@ -100,7 +104,8 @@ class Start extends React.Component {
             // update the current state to reflect the new information
             this.setState({
                 lastNamesAll: names,
-                lastNamesVisible: names
+                lastNamesVisible: names,
+                searchConducted: 'true'
             });
 
             // exit on completion.

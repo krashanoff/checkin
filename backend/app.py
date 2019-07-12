@@ -104,11 +104,9 @@ def search():
                 filteredResults[i].update({ 'altLast': field.Value })
             
             if "Designated Caregiver First Last Name" in field.FieldName and field.Value != "":
-                key = str('caregiver' + str(caregiverCount) + 'Name')
                 filteredResults[i]['caregivers'].append(field.Value)
 
             if "Child's First Name & (Year of Birth)" in field.FieldName and field.Value != "":
-                key = str('child' + str(childCount) + 'Name')
                 filteredResults[i]['children'].append(field.Value)
         
     # Finally, return all of our data as a JSON object to the client.                    

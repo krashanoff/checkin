@@ -13,26 +13,26 @@ class Results extends React.Component {
         const values = this.props.location.state;
 
         // if we are missing props, or have no ids passed, then return the 404 page.
-        if ((typeof values === 'undefined') || (typeof values.ids === "undefined"))
+        if ((typeof values === 'undefined') || (typeof values.ids === "undefined") || (typeof values.data === 'undefined'))
             window.location.href = '/404';
-
-        console.log(values.ids);
-
-        // the state contains redir<bool, desiredLink>
-        this.state = {
-            redir: []
-        };
     }
 
     render() {
         // if we have only one id passed, then just redirect to the proper checkin page.
         if (this.props.location.state.ids.length === 1) {
+            // select only the contact we are concerned with from our data.
+            var desiredContact;
+            Array.from(this.props.location.state.data).forEach( (contact) => {
+                if (contact.id === this.props.location.state.ids[0])
+                    desiredContact = contact;
+            });
+
             return (
                 <Redirect to={{
                     pathname: '/checkin',
                     state: {
                         id: this.props.location.state.ids[0],
-                        contact: this.props.location.state.data[0]
+                        contact: desiredContact
                     }
                 }} />
             );
