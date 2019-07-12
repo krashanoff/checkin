@@ -13,15 +13,15 @@ app = Flask(__name__,
 app.config.update(
     DEBUG = True,
     SECRET_KEY = 'dev',
-    DATABASE = './users.sqlite'
+    DATABASE = './.sqlite'
 )
 
 # Add the database.
 db.init_app(app)
 
 # Protect our API so that only the server can access it.
-cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:*"}})
-app.config['CORS_HEADERS'] = ['Content-Type', 'Access-Control-Allow-Origin']
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin']
 
 # Set up our API client, then validate with contact credentials.
 api = WaApi.WaApiClient(os.environ['WA_CLIENT_ID'], os.environ['WA_CLIENT_SECRET'])
@@ -103,6 +103,10 @@ def search():
 
     # Finally, return all of our data as a JSON object to the client.                    
     return jsonify(filteredResults)
+
+@app.route("/api/log", methods=["POST"])
+def log():
+    return 'logging page here.'
 
 # Provides a login page for the admin table.
 @app.route("/api/login", methods=["GET", "POST"])

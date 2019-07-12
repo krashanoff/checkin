@@ -10,6 +10,7 @@ const SEARCHMIN = 3;
 /* TODO:
  *  - Clean up the formatting of this entire file.
  *  - Actually parse input as we go to request the proper query information.
+ *  - Set catchalls for when we read this.state.data.
  */
 class Start extends React.Component {
     constructor(props) {
@@ -62,7 +63,7 @@ class Start extends React.Component {
         if (input.length === SEARCHMIN) {
             // get data from the API.
             try {
-                const response = await axios.get('http://localhost:5000/api/search?lastName=' + input);
+                const response = await axios.get('http://127.0.0.1:5000/api/search?lastName=' + input);
                 this.setState({ data: response.data });
                 console.log(response.data);
             } catch (error) {

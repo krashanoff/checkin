@@ -22,8 +22,6 @@ class Results extends React.Component {
         this.state = {
             redir: []
         };
-
-        this.handleClick = this.handleClick.bind(this);
     }
 
     render() {

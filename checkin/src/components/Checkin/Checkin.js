@@ -52,7 +52,7 @@ class Checkin extends React.Component {
             || (typeof values.data === 'undefined'))
             window.location.href = '/404';
 
-        this.setState = {
+        this.state = {
             id: values.id,
             contact: values.contact
         };
