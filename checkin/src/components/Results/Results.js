@@ -20,14 +20,10 @@ class Results extends React.Component {
 
         // the state contains redir<bool, desiredLink>
         this.state = {
-            redir: [],
+            redir: []
         };
 
         this.handleClick = this.handleClick.bind(this);
-    }
-
-    // TODO
-    handleClick(event) {
     }
 
     render() {
@@ -45,20 +41,24 @@ class Results extends React.Component {
 
         // create table entries for each id we are passed.
         var entries = [];
-        var LASTNAME = 'LAST NAME';
-        var FIRSTNAMES = 'FIRST NAME';
         Array.from(this.props.location.state.ids).forEach( (id) => {
-            entries.push(
-                <tr className='contactEntry' key={id}>
-                    <td><Link to={{
-                        pathname:'/checkin',
-                        state: {
-                            id: id
-                        }
-                    }}>{LASTNAME}</Link></td>
-                    <td>{FIRSTNAMES}</td>
-                </tr>
-            );
+            Array.from(this.props.location.state.data).forEach( (contact) => {
+                if (contact.id === id) {
+                    entries.push(
+                        <tr className='contactEntry' key={id}>
+                            <td><Link to={{
+                                pathname:'/checkin',
+                                state: {
+                                    id: id,
+                                    contact: contact
+                                }
+                            }}>{contact.accountLast}</Link></td>
+                            <td>{contact.accountFirst}</td>
+                            <td>{contact.spouseFirst}</td>
+                        </tr>
+                    );
+                }
+            });
         });
 
         return (
@@ -66,7 +66,8 @@ class Results extends React.Component {
                 <thead>
                     <tr>
                         <th>Last Name</th>
-                        <th>First Name(s)</th>
+                        <th>First Name</th>
+                        <th>Spouse Name</th>
                     </tr>
                 </thead>
                 <tbody>

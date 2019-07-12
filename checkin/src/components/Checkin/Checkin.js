@@ -5,6 +5,10 @@ function Checkbox(props) {
     return <input className='checkbox' />;
 }
 
+function Entry(props) {
+    return <tr><td>{props.name}</td><td><Checkbox /></td></tr>;
+}
+
 class Counter extends React.Component {
     constructor(props) {
         super(props);
@@ -43,29 +47,15 @@ class Checkin extends React.Component {
 
         const values = this.props.location.state;
 
-        // check for proper state passed by the previous page.
-        // if ((typeof values === 'undefined')
-        //     || (typeof values.id === 'undefined')
-        //     || (typeof values.parentNames === 'undefined')
-        //     || (typeof values.childNames === 'undefined')
-        //     || (typeof values.caregiverNames === 'undefined'))
-        //     window.location.href = '/404';
+        if ((typeof values === 'undefined')
+            || (typeof values.id === 'undefined')
+            || (typeof values.data === 'undefined'))
+            window.location.href = '/404';
 
-        // sample data below
-        this.state = {
-            id: '25',
-            lastName: 'SAMPLE LAST NAME',
-            parentNames: ['SampleFirst1 SampleLast1', 'SampleFirst2 SampleLast2'],
-            childNames: ['Sample1', 'Sample2'],
-            caregiverNames: ['CaregiverFirst1 CaregiverLast1']
+        this.setState = {
+            id: values.id,
+            contact: values.contact
         };
-
-        // this.setState = {
-        //     id: values.id,
-        //     parentNames: values.parentNames,
-        //     childNames: values.childNames,
-        //     caregiverNames: values.caregiverNames
-        // };
 
         this.log = this.log.bind(this);
     }
@@ -83,13 +73,10 @@ class Checkin extends React.Component {
         var children = [];
         var i = 0;
 
-        Array.from(this.state.parentNames).forEach( (parent) => {
+        Array.from(this.state.contact.accountFirst).forEach( (parent) => {
             console.log(parent);
             parents.push(
-                <tr key={i}>
-                    <td>{parent}</td>
-                    <td><Checkbox /></td>
-                </tr>
+                <Entry key={i} name={parent} />
             );
             i++;
         });
@@ -97,10 +84,7 @@ class Checkin extends React.Component {
         Array.from(this.state.childNames).forEach( (child) => {
             console.log(child);
             children.push(
-                <tr key={i}>
-                    <td>{child}</td>
-                    <td><Checkbox /></td>
-                </tr>
+                <Entry key={i} name={child} />
             );
             i++;
         });
@@ -108,10 +92,7 @@ class Checkin extends React.Component {
         Array.from(this.state.caregiverNames).forEach( (caregiver) => {
             console.log(caregiver);
             parents.push(
-                <tr key={i}>
-                    <td>{caregiver}</td>
-                    <td><Checkbox /></td>
-                </tr>
+                <Entry key={i} name={caregiver} />
             );
             i++;
         });
