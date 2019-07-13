@@ -39,10 +39,6 @@ API
 """
 
 # Searches the database for members whose last names start with the query.
-# TODO: Handle the potential cases of inconsistencies in data:
-#   - Children have last names listed
-#   - Children do not have their birth years in parentheses
-#   - Children have two first names
 @app.route("/api/search", methods=["GET"])
 def search():
     # Catch a lack of search query.

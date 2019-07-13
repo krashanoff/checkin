@@ -13,6 +13,9 @@ const SEARCHMIN = 3;
  *  - Set catchalls for when we read this.state.data.
  *  - Associate each Link with the contact of concern, not just the entire block
  *    of data we initially retrieve.
+ *  - Consider finding a way to make the system completed automated.
+ *  - Provide access to member's phone number for an emergency, and to all members'
+ *    emails for a general emergency message.
  */
 class Start extends React.Component {
     constructor(props) {
@@ -38,9 +41,6 @@ class Start extends React.Component {
      * we query for relevant names that match the search term.
      * The function is async as we must wait for the server response before any
      * search suggestions may be made.
-     * TODO: We are getting weird behavior here that shouldn't be happening. Search
-     * suggestions persist after deleting so that the word is shorter than our
-     * SEARCHMIN.
      */
     async handleChange(event) {
         // update our state to match the input
@@ -71,8 +71,7 @@ class Start extends React.Component {
                 this.setState({ data: response.data });
                 console.log(response.data);
             } catch (error) {
-                // TODO: Improve error handling.
-                alert("FAILED TO RECEIVE DATA");
+                alert("Failed retrieving data from the server. Is the server running?");
             }
 
             // populate the lastNamesAll field, mirroring its contents in the
