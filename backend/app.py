@@ -97,16 +97,16 @@ def search():
             if "House # Only" == field.FieldName and field.Value != "":
                 filteredResults[i].update({ 'houseNumber': int(field.Value) })
 
-            if "Spouse / Partners First Name" == field.FieldName and field.Value != "":
+            if "Spouse / Partners First Name" == field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
                 filteredResults[i].update({ 'altFirst': field.Value })
             
-            if "Spouse / Partners Last Name" == field.FieldName and field.Value != "":
+            if "Spouse / Partners Last Name" == field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
                 filteredResults[i].update({ 'altLast': field.Value })
             
-            if "Designated Caregiver First Last Name" in field.FieldName and field.Value != "":
+            if "Designated Caregiver First Last Name" in field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
                 filteredResults[i]['caregivers'].append(field.Value)
 
-            if "Child's First Name & (Year of Birth)" in field.FieldName and field.Value != "":
+            if "Child's First Name & (Year of Birth)" in field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
                 filteredResults[i]['children'].append(field.Value)
         
     # Finally, return all of our data as a JSON object to the client.                    

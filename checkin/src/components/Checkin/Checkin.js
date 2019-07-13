@@ -4,7 +4,10 @@ import './Checkin.css';
 class Checkbox extends React.Component {
     render() {
         return (
-            <input className='checkbox' />
+            <div className='checkbox'>
+                <input type='checkbox' />
+                <span className='checkmark'></span>
+            </div>
         );
     }
 };
@@ -68,6 +71,8 @@ class Checkin extends React.Component {
             id: values.id,
             contact: values.contact
         };
+
+        console.log(values.contact);
 
         this.log = this.log.bind(this);
     }
