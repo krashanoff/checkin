@@ -16,6 +16,8 @@ const SEARCHMIN = 3;
  *  - Consider finding a way to make the system completed automated.
  *  - Provide access to member's phone number for an emergency, and to all members'
  *    emails for a general emergency message.
+ *  - Maybe provide the house number security so that guests can check themselves in
+ *    unattended.
  */
 class Start extends React.Component {
     constructor(props) {
@@ -71,7 +73,7 @@ class Start extends React.Component {
                 this.setState({ data: response.data });
                 console.log(response.data);
             } catch (error) {
-                alert("Failed retrieving data from the server. Is the server running?");
+                alert('Failed retrieving data from the server. Is the server running?');
             }
 
             // populate the lastNamesAll field, mirroring its contents in the

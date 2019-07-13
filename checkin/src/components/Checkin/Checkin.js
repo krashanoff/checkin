@@ -1,5 +1,6 @@
 import React from 'react';
 import './Checkin.css';
+const axios = require('axios');
 
 class Checkbox extends React.Component {
     render() {
@@ -82,7 +83,17 @@ class Checkin extends React.Component {
      * server then logs.
      */
     log = (e) => {
-        console.log(e);
+        axios.post('http://localhost:5000/api/log', {
+            original: Number(this.state.id),
+            modified: '22'
+        })
+        .then( (response) => {
+            console.log(response);
+        })
+        .catch( (err) => {
+            console.log(err);
+            alert('Failed to log check-in properly. See console for more information. Is the server running?');
+        });
     }
 
     render() {

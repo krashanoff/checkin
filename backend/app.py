@@ -11,6 +11,7 @@ from . import WaApi
 empty in the database. This creates the issue that we have blank or
 undefined pieces of information in our search results or check-in
 page.
+* Catch improper data types provided in each request.
 """
 
 # Set up our app.
@@ -117,15 +118,19 @@ the check-in as though it were a difference between the two
 """
 @app.route("/api/log", methods=["POST"])
 def log():
+    # Convert our data from byte-like -> JSON.
+    print(request.data)
+    newjson = json.loads(request.data.decode('utf8').replace('\'', '\"'))
+
     # Catch missing parameters.
-    if 'original' not in request.args or 'modified' not in request.args:
+    if 'original' not in newjson or 'modified' not in newjson:
         return 'ERROR: Missing arguments.'
 
     # Acquire our original and modified contacts.
-    original = request.args['original']
-    mod = request.args['modified']
+    original = newjson['original']
+    mod = newjson['modified']
 
-    return 'Check-in logged.'
+    return 'Check-in logged.' + str(mod)
 
 # Provides a login page for the admin table.
 @app.route("/api/login", methods=["GET", "POST"])
