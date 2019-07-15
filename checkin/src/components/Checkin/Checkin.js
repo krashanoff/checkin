@@ -126,7 +126,9 @@ class Checkin extends React.Component {
         // submit our request with the necessary data.
         console.log(data);
         axios.post('http://localhost:5000/api/log', {
-            info: data
+            params: {
+                info: data
+            }
         })
         // if successful, then continue to the start screen.
         .then( (response) => {

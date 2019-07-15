@@ -73,12 +73,6 @@ def search():
     if 'lastName' not in request.args:
         return "ERROR: No lastName provided for query."
 
-    """
-    NOTE: This query only checks whether the request has a SUBSTRING of the last name.
-    This is because the API provided by Wild Apricot lacks the ability to search through a specific field.
-    As a result, this function of the API simply filters the results after the fact.
-    """
-
     searchQuery = str(request.args['lastName'])
 
     # Compose the filter string that we need to get our desired search. Then, run the search.
@@ -92,8 +86,6 @@ def search():
     })
 
     results = api.execute_request("/v2.1/accounts/" + os.environ['WA_ID'] + "/contacts" + params)
-
-    print("TOOK " + str(end - start) + " TO MAKE THE API CALL.")
 
     # Pick out only the names that *start* with the search query.
     funneled = []
@@ -141,9 +133,13 @@ def search():
 # Takes a JSON object and logs it to our Google Sheets spreadsheet.
 @app.route("/api/log", methods=["POST"])
 def log():
+    # Sanitize
+    # TODO: Improve
+    if 'info' not in request.data:
+        return 'ERROR: MISSING REQUIRED DATA'
+
     # Convert our data from byte-like -> JSON.
     data = json.loads(request.data.decode('utf8').replace('\'', '\"'))['info']
-    print(data)
     
     # Set up the body that will be sent in our request to Google Sheets' API.
     body = {
@@ -156,14 +152,36 @@ def log():
         ]
     }
 
-    # Append our data to the values we will insert.
-    for parent in data['parents']:
-        body['values'][0].append(str(parent))
-    for caregiver in data['caregivers']:
-        body['values'][0].append(str(caregiver))
-    for child in data['children']:
-        body['values'][0].append(str(child))
+    # Define for later usage.
+    vals = body['values'][0]
 
+    # Append our data to the values we will insert.
+    parents = data['parents']
+    caregivers = data['caregivers']
+    children = data['children']
+
+    # We have two possible parent fields.
+    for num in range(2):
+        if num < len(parents):
+            vals.append(str(parents[num]))
+        else:
+            vals.append('')
+
+    # We have three possible caregivers.
+    for num in range(3):
+        if num < len(caregivers):
+            vals.append(str(caregivers[num]))
+        else:
+            vals.append('')
+
+    # We have six possible children.
+    for num in range(6):
+        if num < len(children):
+            vals.append(str(children[num]))
+        else:
+            vals.append('')
+
+    # Finally, append the number of guests present.
     body['values'][0].append(data['adultGuests'])
     body['values'][0].append(data['childGuests'])
 
@@ -174,9 +192,9 @@ def log():
     # Insert the values.
     service.spreadsheets().values().append(
         spreadsheetId=SPREADSHEET_ID, range='Sheet1!A2:N',
-        valueInputOption='USER_ENTERED', insertDataOption='INSERT_ROWS', body=body).execute()
+        valueInputOption='RAW', insertDataOption='INSERT_ROWS', body=body).execute()
 
-    return 'Log successful.'
+    return 'Check-in logged successfully.'
 
 # Provides a login page for the admin table.
 @app.route("/api/login", methods=["GET", "POST"])
