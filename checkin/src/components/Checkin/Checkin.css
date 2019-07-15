@@ -131,3 +131,10 @@
     box-shadow: var(--defaultboxshadow);
     background: var(--activeBlue);
 }
+
+@media screen and (max-width: 500px) {
+    #checkin {
+        grid-template-columns: 100%;
+        grid-template-rows: 25% 25% 25% 25%;
+    }
+}

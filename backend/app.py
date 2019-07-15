@@ -133,13 +133,15 @@ def search():
 # Takes a JSON object and logs it to our Google Sheets spreadsheet.
 @app.route("/api/log", methods=["POST"])
 def log():
-    # Sanitize
-    # TODO: Improve
-    if 'info' not in request.data:
-        return 'ERROR: MISSING REQUIRED DATA'
-
     # Convert our data from byte-like -> JSON.
-    data = json.loads(request.data.decode('utf8').replace('\'', '\"'))['info']
+    jsonData = json.loads(request.data.decode('utf8').replace('\'', '\"'))
+
+    # Sanitize to ensure the request is as expected.
+    if 'data' not in jsonData:
+        return 'ERROR: MISSING REQUIRED DATA'
+    
+    # Get our data.
+    data = jsonData['data']
     
     # Set up the body that will be sent in our request to Google Sheets' API.
     body = {

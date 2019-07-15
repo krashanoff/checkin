@@ -84,18 +84,18 @@ class Checkin extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault();
 
-        var data = {};
+        var requestData = {};
 
         // append id.
-        data.id = this.state.id;
+        requestData.id = this.state.id;
 
         // append account last name.
-        data.lastName = this.state.contact.accountLast;
+        requestData.lastName = this.state.contact.accountLast;
 
         // find and sort guests being checked in.
-        data.parents = [];
-        data.caregivers = [];
-        data.children = [];
+        requestData.parents = [];
+        requestData.caregivers = [];
+        requestData.children = [];
         const entries = document.getElementsByClassName('entry');
         Array.from(entries).forEach( (entry) => {
             if (entry.lastChild.firstChild.firstChild.checked === true) {
@@ -104,11 +104,11 @@ class Checkin extends React.Component {
 
                 // push each entry to its respective array.
                 if (id.includes('parent'))
-                    data.parents.push(name);
+                    requestData.parents.push(name);
                 else if (id.includes('caregiver'))
-                    data.caregivers.push(name);
+                    requestData.caregivers.push(name);
                 else if (id.includes('child'))
-                    data.children.push(name);
+                    requestData.children.push(name);
             }
         });
 
@@ -116,19 +116,17 @@ class Checkin extends React.Component {
         var counters = document.getElementsByClassName('count');
         Array.from(counters).forEach( (counter) => {
             if (counter.name === 'adultGuests')
-                data.adultGuests = Number(counter.innerHTML);
+                requestData.adultGuests = Number(counter.innerHTML);
             else
-                data.childGuests = Number(counter.innerHTML);
+                requestData.childGuests = Number(counter.innerHTML);
         });
 
         // TODO: catch faulty or accidental submissions.
 
         // submit our request with the necessary data.
-        console.log(data);
+        console.log(requestData);
         axios.post('http://localhost:5000/api/log', {
-            params: {
-                info: data
-            }
+                data: requestData
         })
         // if successful, then continue to the start screen.
         .then( (response) => {
