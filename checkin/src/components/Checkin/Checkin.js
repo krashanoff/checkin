@@ -75,8 +75,6 @@ class Checkin extends React.Component {
             id: values.id,
             contact: values.contact
         };
-
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     /* handleSubmit
@@ -100,7 +98,7 @@ class Checkin extends React.Component {
         data.children = [];
         const entries = document.getElementsByClassName('entry');
         Array.from(entries).forEach( (entry) => {
-            if (entry.lastChild.firstChild.firstChild.value === 'on') {
+            if (entry.lastChild.firstChild.firstChild.checked === true) {
                 const id = String(entry.id);
                 const name = entry.firstChild.innerHTML;
 
@@ -126,6 +124,7 @@ class Checkin extends React.Component {
         // TODO: catch faulty or accidental submissions.
 
         // submit our request with the necessary data.
+        console.log(data);
         axios.post('http://localhost:5000/api/log', {
             info: data
         })

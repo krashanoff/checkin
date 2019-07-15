@@ -14,8 +14,13 @@
 }
 
 #view {
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 100%;
+    justify-items: center;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
     width: 100%;
-    height: 100%;
+    height: 90%;
 }

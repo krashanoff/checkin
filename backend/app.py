@@ -1,11 +1,15 @@
 import os
-import time
+import os.path
 from datetime import datetime
 import urllib.parse
 import json
 from flask import Flask, render_template, jsonify, request, abort
 from flask_cors import CORS
 from . import WaApi
+import pickle
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 
 """ TODO:
 * Known issue: There are some contacts whose entries are completely
@@ -28,9 +32,35 @@ app.config.update(
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin']
 
-# Set up our API client, then validate with contact credentials.
+# Set up our Wild Apricot API client, then validate with contact credentials.
 api = WaApi.WaApiClient(os.environ['WA_CLIENT_ID'], os.environ['WA_CLIENT_SECRET'])
 api.authenticate_with_contact_credentials(os.environ['WA_USERNAME'], os.environ['WA_PASSWORD'])
+
+# Set up the Google Sheets API client. Validate with oAuth key.
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+SPREADSHEET_ID = os.environ['SPREADSHEET_ID']
+creds = None
+
+# The file token.pickle stores the user's access and refresh tokens, and is
+# created automatically when the authorization flow completes for the first
+# time.
+if os.path.exists('token.pickle'):
+    with open('token.pickle', 'rb') as token:
+        creds = pickle.load(token)
+
+# If there are no (valid) credentials available, let the user log in.
+if not creds or not creds.valid:
+    if creds and creds.expired and creds.refresh_token:
+        creds.refresh(Request())
+    else:
+        flow = InstalledAppFlow.from_client_secrets_file(
+            'credentials.json', SCOPES)
+        creds = flow.run_local_server()
+    # Save the credentials for the next run
+    with open('token.pickle', 'wb') as token:
+        pickle.dump(creds, token)
+
+service = build('sheets', 'v4', credentials=creds)
 
 """
 API
@@ -61,9 +91,7 @@ def search():
         '$async': 'false'
     })
 
-    start = time.time()
     results = api.execute_request("/v2.1/accounts/" + os.environ['WA_ID'] + "/contacts" + params)
-    end = time.time()
 
     print("TOOK " + str(end - start) + " TO MAKE THE API CALL.")
 
@@ -115,8 +143,9 @@ def search():
 def log():
     # Convert our data from byte-like -> JSON.
     data = json.loads(request.data.decode('utf8').replace('\'', '\"'))['info']
+    print(data)
     
-    # TODO: Set up all the values that we must append to our spreadsheet.
+    # Set up the body that will be sent in our request to Google Sheets' API.
     body = {
         'values': [
             [
@@ -127,7 +156,27 @@ def log():
         ]
     }
 
-    return 'data received: ' + str(data)
+    # Append our data to the values we will insert.
+    for parent in data['parents']:
+        body['values'][0].append(str(parent))
+    for caregiver in data['caregivers']:
+        body['values'][0].append(str(caregiver))
+    for child in data['children']:
+        body['values'][0].append(str(child))
+
+    body['values'][0].append(data['adultGuests'])
+    body['values'][0].append(data['childGuests'])
+
+    print(body['values'])
+
+    print("Appending now.")
+
+    # Insert the values.
+    service.spreadsheets().values().append(
+        spreadsheetId=SPREADSHEET_ID, range='Sheet1!A2:N',
+        valueInputOption='USER_ENTERED', insertDataOption='INSERT_ROWS', body=body).execute()
+
+    return 'Log successful.'
 
 # Provides a login page for the admin table.
 @app.route("/api/login", methods=["GET", "POST"])

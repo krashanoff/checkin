@@ -1,3 +1,4 @@
 *.sqlite
 .env
-fields.md
+token.pickle
+credentials.json
