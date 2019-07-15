@@ -2,11 +2,22 @@ import React from 'react';
 import './Checkin.css';
 const axios = require('axios');
 
+/* TODO:
+ * - Convert entire page to a form.
+ * - Handle submission properly.
+ */
 class Checkbox extends React.Component {
+    constructor(props) {
+        super(props);
+
+        if (typeof this.props.name === 'undefined')
+            console.log("ERROR: CHECKBOX COMPONENT REQUIRES A NAME PARAMETER.");
+        console.log(this.props.name);
+    }
     render() {
         return (
             <div className='checkbox'>
-                <input type='checkbox' />
+                <input type='checkbox' name={this.props.name} />
                 <span className='checkmark'></span>
             </div>
         );
@@ -14,7 +25,7 @@ class Checkbox extends React.Component {
 };
 
 function Entry(props) {
-    return <tr><td>{props.name}</td><td><Checkbox /></td></tr>;
+    return <tr><td>{props.name}</td><td><Checkbox name={props.id} /></td></tr>;
 }
 
 /* Counter
@@ -23,6 +34,9 @@ function Entry(props) {
 class Counter extends React.Component {
     constructor(props) {
         super(props);
+
+        if (typeof this.props.name === 'undefined')
+            console.log("ERROR: COUNTER COMPONENT REQUIRES A NAME PARAMETER.");
 
         this.state = {
             value: 0
@@ -46,7 +60,7 @@ class Counter extends React.Component {
         return(
             <div className='counter'>
                 <button type='button' className='minus' onClick={this.handleChange}>-</button>
-                <button type='button' className='count'>{this.state.value}</button>
+                <button name={this.props.name} type='button' className='count'>{this.state.value}</button>
                 <button type='button' className='plus' onClick={this.handleChange}>+</button>
             </div>
         );
@@ -75,24 +89,38 @@ class Checkin extends React.Component {
 
         console.log(values.contact);
 
-        this.log = this.log.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    /* log()
-     * Sends a POST request to the API with our relevant data, which the
-     * server then logs.
-     */
-    log = (e) => {
+    handleSubmit = (e) => {
+        e.preventDefault();
+
+        var data = {};
+
+        // acquire guest counts from our counters.
+        var counters = document.getElementsByClassName('count');
+        Array.from(counters).forEach( (counter) => {
+            if (counter.name === 'adultGuests')
+                data.adultGuests = Number(counter.innerHTML);
+            else
+                data.childGuests = Number(counter.innerHTML);
+        });
+
+        // TODO: get the present patrons.
+
+        // catch faulty or accidental submissions.
+
+        // submit our request with the necessary data.
         axios.post('http://localhost:5000/api/log', {
-            original: Number(this.state.id),
-            modified: '22'
+            info: data
         })
         .then( (response) => {
+            console.log(data);
             console.log(response);
         })
         .catch( (err) => {
             console.log(err);
-            alert('Failed to log check-in properly. See console for more information. Is the server running?');
+            alert("ERROR");
         });
     }
 
@@ -100,23 +128,30 @@ class Checkin extends React.Component {
         var adults = [];
         var children = [];
         var i = 0;
+        var parentCount = 0;
+        var caregiverCount = 0;
+        var childCount = 0;
 
-        adults.push(<Entry name={String(this.state.contact.accountFirst + ' ' + this.state.contact.accountLast)} key={i} />);
+        adults.push(<Entry name={String(this.state.contact.accountFirst + ' ' + this.state.contact.accountLast)} id={String('parent' + parentCount)} key={i} />);
         i++;
+        parentCount++;
 
         if (typeof this.state.contact.altFirst !== 'undefined' && typeof this.state.contact.altLast !== 'undefined') {
-            adults.push(<Entry name={String(this.state.contact.altFirst + ' ' + this.state.contact.altLast)} key={i} />);
+            adults.push(<Entry name={String(this.state.contact.altFirst + ' ' + this.state.contact.altLast)} id={String('parent' + parentCount)} key={i} />);
             i++;
+            parentCount++;
         }
 
         Array.from(this.state.contact.caregivers).forEach( (caregiverName) => {
-            adults.push(<Entry name={caregiverName} key={i} />);
+            adults.push(<Entry name={caregiverName} id={String('caregiver' + caregiverCount)} key={i} />);
             i++;
+            caregiverCount++;
         });
 
         Array.from(this.state.contact.children).forEach( (childName) => {
-            children.push(<Entry name={childName} key={i} />);
+            children.push(<Entry name={childName} id={String('child' + childCount)} key={i} />);
             i++;
+            childCount++;
         });
 
         return (
@@ -137,11 +172,11 @@ class Checkin extends React.Component {
                     <tbody>
                         <tr>
                             <td>Adult Guests</td>
-                            <td><Counter /></td>
+                            <td><Counter name='adultGuests' /></td>
                         </tr>
                         <tr>
                             <td>Child Guests</td>
-                            <td><Counter /></td>
+                            <td><Counter name='childGuests' /></td>
                         </tr>
                     </tbody>
                 </table>
@@ -159,7 +194,7 @@ class Checkin extends React.Component {
                     </tbody>
                 </table>
 
-                <input onClick={this.log} type='button' value='Check-In' id='checkinButton' />
+                <input onClick={this.handleSubmit} type='button' value='Check-In' id='checkinButton' />
             </div>
         );
     }

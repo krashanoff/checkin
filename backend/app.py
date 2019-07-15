@@ -3,7 +3,6 @@ import urllib.parse
 import json
 from flask import Flask, render_template, jsonify, request, abort
 from flask_cors import CORS
-from . import db
 from . import WaApi
 
 """ TODO:
@@ -20,12 +19,8 @@ app = Flask(__name__,
             template_folder = '../checkin/build')
 app.config.update(
     DEBUG = True,
-    SECRET_KEY = 'dev',
-    DATABASE = './.sqlite'
+    SECRET_KEY = 'dev'
 )
-
-# Add the database.
-db.init_app(app)
 
 # Protect our API so that only the server can access it.
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -122,15 +117,7 @@ def log():
     print(request.data)
     newjson = json.loads(request.data.decode('utf8').replace('\'', '\"'))
 
-    # Catch missing parameters.
-    if 'original' not in newjson or 'modified' not in newjson:
-        return 'ERROR: Missing arguments.'
-
-    # Acquire our original and modified contacts.
-    original = newjson['original']
-    mod = newjson['modified']
-
-    return 'Check-in logged.' + str(mod)
+    return 'Check-in logged. Our data logged is: ' + str(newjson['info'])
 
 # Provides a login page for the admin table.
 @app.route("/api/login", methods=["GET", "POST"])
