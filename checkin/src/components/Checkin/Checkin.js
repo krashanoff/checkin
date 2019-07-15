@@ -173,10 +173,9 @@ class Checkin extends React.Component {
         return (
             <div id='checkin'>
                 <table className='namesTable' id='parents'>
-                    <caption>Adults</caption>
                     <thead>
                         <tr>
-                            <th>Name</th>
+                            <th>Adults</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -199,8 +198,10 @@ class Checkin extends React.Component {
                 </table>
                 
                 <table className='namesTable' id='children'>
-                    <caption>Children</caption>
                     <tbody>
+                        <tr>
+                            <th>Children</th>
+                        </tr>
                         {
                         // Render the child table only if child names are passed.
                         // TODO: Make this look nicer.
