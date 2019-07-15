@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 import urllib.parse
 import json
 from flask import Flask, render_template, jsonify, request, abort
@@ -104,20 +105,25 @@ def search():
     # Finally, return all of our data as a JSON object to the client.                    
     return jsonify(filteredResults)
 
-"""
-Expects two pieces of JSON: the original contact returned
-by /api/search, and the contact containing only the fields
-for the members checking in. It uses these in tandem to log
-the check-in as though it were a difference between the two
-(think `git diff HEAD~ > change.patch`).
-"""
+# Takes a JSON object and logs it to our Google Sheets spreadsheet.
 @app.route("/api/log", methods=["POST"])
 def log():
     # Convert our data from byte-like -> JSON.
     print(request.data)
-    newjson = json.loads(request.data.decode('utf8').replace('\'', '\"'))
+    data = json.loads(request.data.decode('utf8').replace('\'', '\"'))['info']
+    
+    # TODO: Set up all the values that we must append to our spreadsheet.
+    body = {
+        'values': [
+            [
+                datetime.now().strftime("%Y-%b-%d %H:%M"),
+                data['id'],
+                data['lastName']
+            ]
+        ]
+    }
 
-    return 'Check-in logged. Our data logged is: ' + str(newjson['info'])
+    return 'data received: ' + str(data)
 
 # Provides a login page for the admin table.
 @app.route("/api/login", methods=["GET", "POST"])

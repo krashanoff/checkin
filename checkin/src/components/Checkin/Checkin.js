@@ -6,26 +6,18 @@ const axios = require('axios');
  * - Convert entire page to a form.
  * - Handle submission properly.
  */
-class Checkbox extends React.Component {
-    constructor(props) {
-        super(props);
-
-        if (typeof this.props.name === 'undefined')
-            console.log("ERROR: CHECKBOX COMPONENT REQUIRES A NAME PARAMETER.");
-        console.log(this.props.name);
-    }
-    render() {
-        return (
-            <div className='checkbox'>
-                <input type='checkbox' name={this.props.name} />
-                <span className='checkmark'></span>
-            </div>
-        );
-    }
-};
-
 function Entry(props) {
-    return <tr><td>{props.name}</td><td><Checkbox name={props.id} /></td></tr>;
+    return (
+        <tr className='entry'>
+            <td>{props.name}</td>
+            <td>
+                <div className='checkbox'>
+                    <input type='checkbox' name={props.name} />
+                    <span className='checkmark'></span>
+                </div>
+            </td>
+        </tr>
+    );
 }
 
 /* Counter
@@ -67,9 +59,8 @@ class Counter extends React.Component {
     }
 };
 
- // TODO: Consider creating a new component to handle the table.
- // TODO: Add their street number for confirmation.
- // TODO: Use <div>s instead of tables for formatting.
+// TODO: Add their street number for confirmation.
+// TODO: Separate parents, caregivers, and children in the POST request.
 class Checkin extends React.Component {
     constructor(props) {
         super(props);
@@ -97,6 +88,21 @@ class Checkin extends React.Component {
 
         var data = {};
 
+        // append id.
+        data.id = this.state.id;
+
+        // append account last name.
+        data.lastName = this.state.contact.accountLast;
+
+        // cycle through our name entries and find those that
+        // are checked.
+        data.names = [];
+        var entries = document.getElementsByClassName('entry');
+        Array.from(entries).forEach( (entry) => {
+            if (entry.lastChild.firstChild.firstChild.value === 'on')
+                data.names.push(entry.firstChild.innerHTML);
+        });
+
         // acquire guest counts from our counters.
         var counters = document.getElementsByClassName('count');
         Array.from(counters).forEach( (counter) => {
@@ -106,16 +112,13 @@ class Checkin extends React.Component {
                 data.childGuests = Number(counter.innerHTML);
         });
 
-        // TODO: get the present patrons.
-
-        // catch faulty or accidental submissions.
+        // TODO: catch faulty or accidental submissions.
 
         // submit our request with the necessary data.
         axios.post('http://localhost:5000/api/log', {
             info: data
         })
         .then( (response) => {
-            console.log(data);
             console.log(response);
         })
         .catch( (err) => {

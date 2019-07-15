@@ -13,11 +13,9 @@ const SEARCHMIN = 3;
  *  - Set catchalls for when we read this.state.data.
  *  - Associate each Link with the contact of concern, not just the entire block
  *    of data we initially retrieve.
- *  - Consider finding a way to make the system completed automated.
  *  - Provide access to member's phone number for an emergency, and to all members'
  *    emails for a general emergency message.
- *  - Maybe provide the house number security so that guests can check themselves in
- *    unattended.
+ *  - Pass things through via PROPS, *not* state.
  */
 class Start extends React.Component {
     constructor(props) {
