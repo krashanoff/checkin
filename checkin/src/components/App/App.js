@@ -6,26 +6,13 @@ import Results from '../Results/Results';
 import Checkin from '../Checkin/Checkin';
 import Missing from '../Missing/Missing';
 
-class App extends React.Component {
-    componentDidMount() {
-        this.viewHeightCalc();
-        document.addEventListener('resize', this.viewHeightCalc);
-    }
-
-    viewHeightCalc = () => {
-        const navHeight = parseInt(window.getComputedStyle(document.getElementById('nav')).getPropertyValue('height'));
-        console.log(navHeight);
-        console.log(window.innerHeight);
-        document.documentElement.style.setProperty('--viewHeight', (window.innerHeight - navHeight) + 'px');
-        console.log(document.documentElement.style.getPropertyValue('--viewHeight'));
-    }
-    
+class App extends React.Component {    
     render() {
         return (
             <Router>
                 <div id='nav'>
                     <Link className='navLink' to='/'>SHHA Check-In System</Link>
-                    <Link className='navLink' to='/admin'>Admin</Link>
+                    <a className='navLink' href='http://localhost:5000/api/login'>Admin</a>
                 </div>
 
                 <div id='view'>

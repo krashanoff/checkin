@@ -201,11 +201,11 @@ def log():
 def login():
     # Serve the login page.
     if request.method == "GET":
-        print("GET")
+        return 'GET'
 
     # Verify the login then redirect with token.
     else:
-        print("POST")
+        return 'POST'
 
 """
 WEBPAGES
