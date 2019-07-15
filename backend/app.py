@@ -1,4 +1,5 @@
 import os
+import time
 from datetime import datetime
 import urllib.parse
 import json
@@ -60,7 +61,11 @@ def search():
         '$async': 'false'
     })
 
+    start = time.time()
     results = api.execute_request("/v2.1/accounts/" + os.environ['WA_ID'] + "/contacts" + params)
+    end = time.time()
+
+    print("TOOK " + str(end - start) + " TO MAKE THE API CALL.")
 
     # Pick out only the names that *start* with the search query.
     funneled = []

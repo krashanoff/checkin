@@ -3,8 +3,7 @@ import './Checkin.css';
 const axios = require('axios');
 
 /* TODO:
- * - Convert entire page to a form.
- * - Handle submission properly.
+ * - Clean up this component's code.
  */
 function Entry(props) {
     return (
@@ -60,7 +59,6 @@ class Counter extends React.Component {
 };
 
 // TODO: Add their street number for confirmation.
-// TODO: Separate parents, caregivers, and children in the POST request.
 class Checkin extends React.Component {
     constructor(props) {
         super(props);
@@ -100,11 +98,13 @@ class Checkin extends React.Component {
         data.parents = [];
         data.caregivers = [];
         data.children = [];
-        var entries = document.getElementsByClassName('entry');
+        const entries = document.getElementsByClassName('entry');
         Array.from(entries).forEach( (entry) => {
             if (entry.lastChild.firstChild.firstChild.value === 'on') {
                 const id = String(entry.id);
                 const name = entry.firstChild.innerHTML;
+
+                // push each entry to its respective array.
                 if (id.includes('parent'))
                     data.parents.push(name);
                 else if (id.includes('caregiver'))

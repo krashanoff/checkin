@@ -80,7 +80,7 @@ class Start extends React.Component {
 
             // push the UID and the last name into the array.
             // this functions similarly to pair<Id[], LastName>.
-            this.state.data.forEach( (contact) => {
+            Array.from(this.state.data).forEach( (contact) => {
                 names.push([ [contact.id], contact.accountLast ]);
             });
 
