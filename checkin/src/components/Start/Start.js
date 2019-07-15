@@ -15,7 +15,6 @@ const SEARCHMIN = 3;
  *    of data we initially retrieve.
  *  - Provide access to member's phone number for an emergency, and to all members'
  *    emails for a general emergency message.
- *  - Pass things through via PROPS, *not* state.
  */
 class Start extends React.Component {
     constructor(props) {
@@ -72,6 +71,7 @@ class Start extends React.Component {
                 console.log(response.data);
             } catch (error) {
                 alert('Failed retrieving data from the server. Is the server running?');
+                return;
             }
 
             // populate the lastNamesAll field, mirroring its contents in the

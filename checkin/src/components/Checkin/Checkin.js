@@ -8,7 +8,7 @@ const axios = require('axios');
  */
 function Entry(props) {
     return (
-        <tr className='entry'>
+        <tr className='entry' id={props.id}>
             <td>{props.name}</td>
             <td>
                 <div className='checkbox'>
@@ -78,11 +78,13 @@ class Checkin extends React.Component {
             contact: values.contact
         };
 
-        console.log(values.contact);
-
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    /* handleSubmit
+     * Scrapes our webpage for all relevant data, then submits it to the
+     * server for processing.
+     */
     handleSubmit = (e) => {
         e.preventDefault();
 
@@ -94,13 +96,22 @@ class Checkin extends React.Component {
         // append account last name.
         data.lastName = this.state.contact.accountLast;
 
-        // cycle through our name entries and find those that
-        // are checked.
-        data.names = [];
+        // find and sort guests being checked in.
+        data.parents = [];
+        data.caregivers = [];
+        data.children = [];
         var entries = document.getElementsByClassName('entry');
         Array.from(entries).forEach( (entry) => {
-            if (entry.lastChild.firstChild.firstChild.value === 'on')
-                data.names.push(entry.firstChild.innerHTML);
+            if (entry.lastChild.firstChild.firstChild.value === 'on') {
+                const id = String(entry.id);
+                const name = entry.firstChild.innerHTML;
+                if (id.includes('parent'))
+                    data.parents.push(name);
+                else if (id.includes('caregiver'))
+                    data.caregivers.push(name);
+                else if (id.includes('child'))
+                    data.children.push(name);
+            }
         });
 
         // acquire guest counts from our counters.
@@ -118,35 +129,38 @@ class Checkin extends React.Component {
         axios.post('http://localhost:5000/api/log', {
             info: data
         })
+        // if successful, then continue to the start screen.
         .then( (response) => {
             console.log(response);
+            // window.location.href = '/';
         })
-        .catch( (err) => {
-            console.log(err);
-            alert("ERROR");
+        // if the request fails, then display our error message.
+        .catch( () => {
+            alert("ERROR: Logging could not be completed properly. Please wait a few seconds and try again.\nIf this message persists, then contact the administrator.");
         });
     }
 
     render() {
-        var adults = [];
+        var parents = [];
+        var caregivers = [];
         var children = [];
         var i = 0;
         var parentCount = 0;
         var caregiverCount = 0;
         var childCount = 0;
 
-        adults.push(<Entry name={String(this.state.contact.accountFirst + ' ' + this.state.contact.accountLast)} id={String('parent' + parentCount)} key={i} />);
+        parents.push(<Entry name={String(this.state.contact.accountFirst + ' ' + this.state.contact.accountLast)} id={String('parent' + parentCount)} key={i} />);
         i++;
         parentCount++;
 
         if (typeof this.state.contact.altFirst !== 'undefined' && typeof this.state.contact.altLast !== 'undefined') {
-            adults.push(<Entry name={String(this.state.contact.altFirst + ' ' + this.state.contact.altLast)} id={String('parent' + parentCount)} key={i} />);
+            parents.push(<Entry name={String(this.state.contact.altFirst + ' ' + this.state.contact.altLast)} id={String('parent' + parentCount)} key={i} />);
             i++;
             parentCount++;
         }
 
         Array.from(this.state.contact.caregivers).forEach( (caregiverName) => {
-            adults.push(<Entry name={caregiverName} id={String('caregiver' + caregiverCount)} key={i} />);
+            caregivers.push(<Entry name={caregiverName} id={String('caregiver' + caregiverCount)} key={i} />);
             i++;
             caregiverCount++;
         });
@@ -167,7 +181,8 @@ class Checkin extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {adults}
+                        {parents}
+                        {caregivers}
                     </tbody>
                 </table>
 

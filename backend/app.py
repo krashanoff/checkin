@@ -109,7 +109,6 @@ def search():
 @app.route("/api/log", methods=["POST"])
 def log():
     # Convert our data from byte-like -> JSON.
-    print(request.data)
     data = json.loads(request.data.decode('utf8').replace('\'', '\"'))['info']
     
     # TODO: Set up all the values that we must append to our spreadsheet.
