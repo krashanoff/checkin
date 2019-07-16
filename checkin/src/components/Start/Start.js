@@ -55,7 +55,6 @@ class Start extends React.Component {
                 lastNamesVisible: [],
                 searchConducted: 'false'
             });
-            console.log('cleared names and reset');
 
             return;
         }

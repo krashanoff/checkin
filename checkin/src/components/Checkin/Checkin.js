@@ -2,8 +2,10 @@ import React from 'react';
 import './Checkin.css';
 const axios = require('axios');
 
-/* TODO:
- * - Clean up this component's code.
+/* Entry
+ * A row in a table that contains the name and id passed
+ * to it, along with a checkmark to toggle the entry's
+ * current status.
  */
 function Entry(props) {
     return (
@@ -123,17 +125,22 @@ class Checkin extends React.Component {
                 requestData.childGuests = Number(counter.innerHTML);
         });
 
-        // TODO: catch faulty or accidental submissions.
+        // Catch faulty or accidental submissions.
+        if (requestData.parents.length === 0
+            && requestData.caregivers.length === 0
+            && requestData.children.length === 0) {
+                alert('ERROR: No adults or children are selected');
+                return;
+            }
 
         // submit our request with the necessary data.
-        console.log(requestData);
         axios.post('http://localhost:5000/api/log', {
                 data: requestData
         })
         // if successful, then continue to the start screen.
         .then( (response) => {
-            console.log(response);
-            // window.location.href = '/';
+            alert(response.data);
+            window.location.href = '/';
         })
         // if the request fails, then display our error message.
         .catch( () => {
@@ -194,19 +201,6 @@ class Checkin extends React.Component {
                         {caregivers}
                     </tbody>
                 </table>
-
-                <table className='namesTable' id='guests'>
-                    <tbody>
-                        <tr>
-                            <td>Adult Guests</td>
-                            <td><Counter name='adultGuests' /></td>
-                        </tr>
-                        <tr>
-                            <td>Child Guests</td>
-                            <td><Counter name='childGuests' /></td>
-                        </tr>
-                    </tbody>
-                </table>
                 
                 <table className='namesTable' id='children'>
                     <tbody>
@@ -220,6 +214,19 @@ class Checkin extends React.Component {
 
                         children : <div />
                         }
+                    </tbody>
+                </table>
+
+                <table className='namesTable' id='guests'>
+                    <tbody>
+                        <tr>
+                            <td>Adult Guests</td>
+                            <td><Counter name='adultGuests' /></td>
+                        </tr>
+                        <tr>
+                            <td>Child Guests</td>
+                            <td><Counter name='childGuests' /></td>
+                        </tr>
                     </tbody>
                 </table>
 

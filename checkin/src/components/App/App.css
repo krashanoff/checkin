@@ -16,7 +16,7 @@
 #view {
     display: flex;
     width: 100%;
-    height: 70vh;   /* TODO: Make this a height determined dynamically. */
+    height: 80vh;   /* TODO: Make this a height determined dynamically. */
     align-items: center;
     justify-content: center;
 }

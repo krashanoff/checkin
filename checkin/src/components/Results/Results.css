@@ -1,6 +1,6 @@
 #results {
     display: table;
-    width: 80%;
+    width: 90%;
     font-size: 3em;
     border: 1px solid black;
 }
@@ -10,7 +10,7 @@
 }
 
 #results a {
-    display: table;
+    display: table-cell;
     color: var(--black);
     text-decoration: underline dotted black;
 }
