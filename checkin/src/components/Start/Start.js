@@ -15,6 +15,8 @@ const SEARCHMIN = 3;
  *    of data we initially retrieve.
  *  - Provide access to member's phone number for an emergency, and to all members'
  *    emails for a general emergency message.
+ *  - Provide more verbose error feedback, maybe a timeout before trying to run
+ *    a query again.
  */
 class Start extends React.Component {
     constructor(props) {
