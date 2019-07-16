@@ -120,6 +120,9 @@ def search():
             
             if "Spouse / Partners Last Name" == field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
                 filteredResults[i].update({ 'altLast': field.Value })
+
+            if "3rd Adult First Last Name" == field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
+                filteredResults[i].update({ 'thirdAdult': field.Value })
             
             if "Designated Caregiver First Last Name" in field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
                 filteredResults[i]['caregivers'].append(field.Value)
@@ -169,6 +172,12 @@ def log():
         else:
             vals.append('')
 
+    # We have one possible thirdAdult field.
+    if 'thirdAdult' in data:
+        vals.append(str(data['thirdAdult']))
+    else:
+        vals.append('')
+
     # We have three possible caregivers.
     for num in range(3):
         if num < len(caregivers):
@@ -203,7 +212,7 @@ def log():
 def login():
     # Serve the login page.
     if request.method == "GET":
-        return 'GET'
+        return render_template('login.html')
 
     # Verify the login then redirect with token.
     else:

@@ -105,6 +105,8 @@ class Checkin extends React.Component {
                 // push each entry to its respective array.
                 if (id.includes('parent'))
                     requestData.parents.push(name);
+                else if (id === 'thirdAdult')
+                    requestData.thirdAdult = name;
                 else if (id.includes('caregiver'))
                     requestData.caregivers.push(name);
                 else if (id.includes('child'))
@@ -152,18 +154,27 @@ class Checkin extends React.Component {
         i++;
         parentCount++;
 
+        // Add the second possible parent, if present.
         if (typeof this.state.contact.altFirst !== 'undefined' && typeof this.state.contact.altLast !== 'undefined') {
             parents.push(<Entry name={String(this.state.contact.altFirst + ' ' + this.state.contact.altLast)} id={String('parent' + parentCount)} key={i} />);
             i++;
             parentCount++;
         }
 
+        // Add the third adult field.
+        if (typeof this.state.contact.thirdAdult !== 'undefined') {
+            parents.push(<Entry name={String(this.state.contact.thirdAdult)} id='thirdAdult' key={i} />);
+            i++;
+        }
+
+        // Add the caregivers applicable.
         Array.from(this.state.contact.caregivers).forEach( (caregiverName) => {
             caregivers.push(<Entry name={caregiverName} id={String('caregiver' + caregiverCount)} key={i} />);
             i++;
             caregiverCount++;
         });
 
+        // Add the children applicable.
         Array.from(this.state.contact.children).forEach( (childName) => {
             children.push(<Entry name={childName} id={String('child' + childCount)} key={i} />);
             i++;
@@ -203,7 +214,7 @@ class Checkin extends React.Component {
                             <th>Children</th>
                         </tr>
                         {
-                        // Render the child table only if child names are passed.
+                        // Render the child table only if child names are present.
                         // TODO: Make this look nicer.
                         children.length > 0 ?
 

@@ -6,7 +6,7 @@ import Results from '../Results/Results';
 import Checkin from '../Checkin/Checkin';
 import Missing from '../Missing/Missing';
 
-class App extends React.Component {    
+class App extends React.Component {
     render() {
         return (
             <Router>
