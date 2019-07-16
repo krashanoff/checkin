@@ -1,4 +1,5 @@
 *.sqlite
+*.pem
 .env
 token.pickle
 credentials.json

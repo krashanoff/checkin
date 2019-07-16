@@ -3,7 +3,7 @@ import os.path
 from datetime import datetime
 import urllib.parse
 import json
-from flask import Flask, render_template, jsonify, request, abort
+from flask import Flask, render_template, jsonify, request, abort, redirect, url_for
 from flask_cors import CORS
 from . import WaApi
 import pickle
@@ -216,7 +216,11 @@ def login():
 
     # Verify the login then redirect with token.
     else:
-        return 'POST'
+        return redirect(url_for('admin'))
+        
+@app.route("/api/admin", methods=["GET"])
+def admin():
+    return render_template('admin.html', data="LOGGED IN PROPERLY")
 
 """
 WEBPAGES
