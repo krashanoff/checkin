@@ -12,7 +12,7 @@ function Entry(props) {
             <td>
                 <div className='checkbox'>
                     <input type='checkbox' name={props.name} />
-                    <span className='checkmark'></span>
+                    <span className='checkmark' />
                 </div>
             </td>
         </tr>
