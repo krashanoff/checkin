@@ -1,15 +1,18 @@
 import os
-from datetime import datetime
 import json
 import urllib.parse
+from datetime import datetime
+
 from flask import Flask, render_template, jsonify, request, abort, redirect, url_for, flash
-from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
 from flask_cors import CORS
+from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
+
 from . import WaApi
+
 import pickle
 from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
 
 """ TODO:
 * Known issue: There are some contacts whose entries are completely
@@ -114,6 +117,49 @@ def request_loader(request):
     return user
 
 """
+UTILITY FUNCTIONS
+"""
+
+# Parses a contact and returns the same information that
+# our endpoint /api/search would return in a typical query.
+# RETURNS A DICTIONARY, NOT JSON.
+def parseContact(contact):
+    # Parse each name for relevant information.
+    contactInfo = {}
+
+    # Append relevant contact information.
+    contactInfo.update({ 'id': contact.Id })
+    contactInfo.update({ 'accountFirst': contact.FirstName, 'accountLast': contact.LastName })
+    contactInfo.update({ 'caregivers': [] })
+    contactInfo.update({ 'children': [] })
+        
+    # Big switch/case statement to catch relevant information.
+    for field in contact.FieldValues:
+
+        caregiverCount = 0
+        childCount = 0
+
+        if "House # Only" == field.FieldName and field.Value != "":
+            contactInfo.update({ 'houseNumber': int(field.Value) })
+
+        if "Spouse / Partners First Name" == field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
+            contactInfo.update({ 'altFirst': field.Value })
+            
+        if "Spouse / Partners Last Name" == field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
+            contactInfo.update({ 'altLast': field.Value })
+
+        if "3rd Adult First Last Name" == field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
+            contactInfo.update({ 'thirdAdult': field.Value })
+            
+        if "Designated Caregiver First Last Name" in field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
+            contactInfo['caregivers'].append(field.Value)
+
+        if "Child's First Name & (Year of Birth)" in field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
+            contactInfo['children'].append(field.Value)
+
+    return contactInfo
+
+"""
 API
 """
 
@@ -145,41 +191,11 @@ def search():
         if str(contact.LastName).upper().startswith(searchQuery.upper()):
             funneled.append(contact)
 
-    # Parse each name for relevant information.
+
     filteredResults = []
-
-    for i, contact in enumerate(funneled):
-
-        # Append relevant contact information.
-        filteredResults.append( {} )        
-        filteredResults[i].update({ 'id': contact.Id })
-        filteredResults[i].update({ 'accountFirst': contact.FirstName, 'accountLast': contact.LastName })
-        filteredResults[i].update({ 'caregivers': [] })
-        filteredResults[i].update({ 'children': [] })
-        
-        # Big switch/case statement to catch relevant information.
-        for field in contact.FieldValues:
-
-            caregiverCount = 0
-            childCount = 0
-
-            if "House # Only" == field.FieldName and field.Value != "":
-                filteredResults[i].update({ 'houseNumber': int(field.Value) })
-
-            if "Spouse / Partners First Name" == field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
-                filteredResults[i].update({ 'altFirst': field.Value })
-            
-            if "Spouse / Partners Last Name" == field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
-                filteredResults[i].update({ 'altLast': field.Value })
-
-            if "3rd Adult First Last Name" == field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
-                filteredResults[i].update({ 'thirdAdult': field.Value })
-            
-            if "Designated Caregiver First Last Name" in field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
-                filteredResults[i]['caregivers'].append(field.Value)
-
-            if "Child's First Name & (Year of Birth)" in field.FieldName and field.Value != "" and field.Value != "None" and field.Value != None:
-                filteredResults[i]['children'].append(field.Value)
+    
+    for contact in funneled:
+        filteredResults.append(parseContact(contact))
         
     # Finally, return all of our data as a JSON object to the client.                    
     return jsonify(filteredResults)
@@ -302,19 +318,11 @@ def admin():
 @app.route("/admin/user/<id>")
 @login_required
 def userInfo(id):
-    response = api.execute_request(accountsBase + '/contacts/' + id)
+    # TODO: Sanitize
+    response = api.execute_request(accountsBase + '/contacts/' + str(id))
 
-    # Construct the array of data that we will be using to serve the page.
-    data = {}
-
-    # Append some fields we know will always be present.
-    data.update({ 'id': id })
-    data.update({ 'accountLast': response.LastName })
-    data.update({ 'accountFirst': response.FirstName })
-
-    # TEST DATA BELOW.
-    data.update({ 'children': [] })
-    data['children'].append('car')
+    # Get all the important details, with some small caveats.
+    data = parseContact(response)
 
     return render_template('protected/userInfo.html', data = data)
 

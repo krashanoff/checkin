@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#e6e6e6" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>SHHA Check-In System | User Information</title>
-    <link rel='stylesheet' type='text/css' href='./admin.css' />
+    <link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/admin.css') }}' />
 </head>
 <body>
     <h1>{{ data.accountLast }}, {{ data.accountFirst }}</h1>

@@ -7,10 +7,10 @@
     <meta name="theme-color" content="#e6e6e6" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>SHHA Check-In System | Login</title>
-    <link rel='stylesheet' type='text/css' href='./admin.css' />
+    <link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/admin.css') }}' />
 </head>
 <body>
-    <form action='/login' method='post' id='login'>
+    <form action='/admin/login' method='post' id='login'>
         <h1>Please login.</h1>
         <input type='text' name='username' placeholder='Username' />
         <input type='password' name='password' placeholder='Password' />
