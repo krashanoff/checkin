@@ -1,7 +1,9 @@
 import os
 from datetime import datetime
 import json
-from flask import Flask, render_template, jsonify, request, abort, redirect, url_for
+import urllib.parse
+from flask import Flask, render_template, jsonify, request, abort, redirect, url_for, flash
+from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
 from flask_cors import CORS
 from . import WaApi
 import pickle
@@ -17,6 +19,9 @@ page.
 * Catch improper data types provided in each request.
 """
 
+"""
+FLASK CONFIG
+"""
 # Set up our app.
 app = Flask(__name__,
             static_folder = '../checkin/build/static',
@@ -26,14 +31,23 @@ app.config.update(
     SECRET_KEY = 'dev'
 )
 
+"""
+CORS
+"""
 # Protect our API so that only the server can access it.
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin']
 
+"""
+Wild Apricot
+"""
 # Set up our Wild Apricot API client, then validate with contact credentials.
 api = WaApi.WaApiClient(os.environ['WA_CLIENT_ID'], os.environ['WA_CLIENT_SECRET'])
 api.authenticate_with_contact_credentials(os.environ['WA_USERNAME'], os.environ['WA_PASSWORD'])
 
+"""
+GOOGLE SHEETS
+"""
 # Set up the Google Sheets API client. Validate with oAuth key.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SPREADSHEET_ID = os.environ['SPREADSHEET_ID']
@@ -59,6 +73,42 @@ if not creds or not creds.valid:
         pickle.dump(creds, token)
 
 service = build('sheets', 'v4', credentials=creds)
+
+"""
+USER MANAGEMENT
+"""
+# Set up the login service and "database"
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+# TODO: Make a proper database.
+tempDb = { 'admin': { 'password': 'P A S S W O R D' }}
+
+class User(UserMixin):
+    pass
+
+@login_manager.user_loader
+def user_loader(username):
+    if username not in tempDb:
+        return
+    
+    user = User()
+    user.id = username
+    return user
+
+@login_manager.request_loader
+def request_loader(request):
+    username = request.form.get('username')
+
+    if username not in tempDb:
+        return
+        
+    user = User()
+    user.id = username
+
+    user.is_authenticated = request.form['password'] == users[username]['password']
+
+    return user
 
 """
 API
@@ -134,7 +184,7 @@ def search():
 # Takes a JSON object and logs it to our Google Sheets spreadsheet.
 @app.route("/api/log", methods=["POST"])
 def log():
-    # Convert our data from byte-like -> JSON.
+        # Convert our data from byte-like -> JSON.
     jsonData = json.loads(request.data.decode('utf8').replace('\'', '\"'))
 
     # Sanitize to ensure the request is as expected.
@@ -206,19 +256,44 @@ def log():
     return 'Check-in logged successfully.'
 
 # Provides a login page for the admin table.
-@app.route("/api/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    # Serve the login page.
-    if request.method == "GET":
-        return render_template('login.html')
+    # If provided a GET request, then return our login page.
+    if request.method == 'GET':
+        return render_template('protected/login.html')
 
-    # Verify the login then redirect with token.
-    else:
-        return redirect(url_for('admin'))
+    # Since our database is currently lackluster, check to make sure we don't cause
+    # any errors with the request passed.
+    if ('username' not in request.form) or (request.form['username'] not in tempDb):
+        return 'ERROR: BAD REQUEST'
+
+    # Get the username from the request.
+    username = request.form['username']
+
+    # Validate the information and then pass to the admin page.
+    if request.form['password'] == tempDb[username]['password']:
         
-@app.route("/api/admin", methods=["GET"])
+        user = User()
+        user.id = username
+        login_user(user)
+
+        return redirect(url_for('admin'))
+
+    # Under all other conditions, return an error.
+    return 'ERROR: BAD REQUEST'
+        
+# Returns the admin page under the conditions that the current user is logged in.
+@app.route("/admin")
+@login_required
 def admin():
-    return render_template('admin.html', data="LOGGED IN PROPERLY")
+    return render_template('protected/admin.html', username = current_user.id)
+
+# Logout the current user.
+@app.route("/logout")
+def logout():
+    logout_user()
+    
+    return 'Logged out successfully.'
 
 """
 WEBPAGES
