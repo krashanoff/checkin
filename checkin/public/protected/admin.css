@@ -1,0 +1,7 @@
+/* admin.css
+ * All the styling for the admin pages served by our backend.
+ */
+
+table {
+    border: thin dashed black;
+}

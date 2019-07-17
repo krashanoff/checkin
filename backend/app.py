@@ -45,6 +45,9 @@ Wild Apricot
 api = WaApi.WaApiClient(os.environ['WA_CLIENT_ID'], os.environ['WA_CLIENT_SECRET'])
 api.authenticate_with_contact_credentials(os.environ['WA_USERNAME'], os.environ['WA_PASSWORD'])
 
+accountsBase = "/v2.1/accounts/" + os.environ['WA_ID']
+emailBase = "/v2.1/rpc/" + os.environ['WA_ID'] + "/email"
+
 """
 GOOGLE SHEETS
 """
@@ -133,7 +136,7 @@ def search():
         '$async': 'false'
     })
 
-    results = api.execute_request("/v2.1/accounts/" + os.environ['WA_ID'] + "/contacts" + params)
+    results = api.execute_request(accountsBase + "/contacts" + params)
 
     # Pick out only the names that *start* with the search query.
     funneled = []
@@ -184,7 +187,7 @@ def search():
 # Takes a JSON object and logs it to our Google Sheets spreadsheet.
 @app.route("/api/log", methods=["POST"])
 def log():
-        # Convert our data from byte-like -> JSON.
+    # Convert our data from byte-like -> JSON.
     jsonData = json.loads(request.data.decode('utf8').replace('\'', '\"'))
 
     # Sanitize to ensure the request is as expected.
@@ -256,7 +259,7 @@ def log():
     return 'Check-in logged successfully.'
 
 # Provides a login page for the admin table.
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/admin/login", methods=["GET", "POST"])
 def login():
     # If provided a GET request, then return our login page.
     if request.method == 'GET':
@@ -281,19 +284,57 @@ def login():
 
     # Under all other conditions, return an error.
     return 'ERROR: BAD REQUEST'
-        
+
+# Logout the current user.
+@app.route("/admin/logout")
+def logout():
+    logout_user()
+    
+    return 'Logged out successfully.'
+
 # Returns the admin page under the conditions that the current user is logged in.
 @app.route("/admin")
 @login_required
 def admin():
     return render_template('protected/admin.html', username = current_user.id)
 
-# Logout the current user.
-@app.route("/logout")
-def logout():
-    logout_user()
-    
-    return 'Logged out successfully.'
+# Route for getting more information about a specific member.
+@app.route("/admin/user/<id>")
+@login_required
+def userInfo(id):
+    response = api.execute_request(accountsBase + '/contacts/' + id)
+
+    # Construct the array of data that we will be using to serve the page.
+    data = {}
+
+    # Append some fields we know will always be present.
+    data.update({ 'id': id })
+    data.update({ 'accountLast': response.LastName })
+    data.update({ 'accountFirst': response.FirstName })
+
+    # TEST DATA BELOW.
+    data.update({ 'children': [] })
+    data['children'].append('car')
+
+    return render_template('protected/userInfo.html', data = data)
+
+# TODO: Send an email to all SHHA Pool members.
+@app.route("/admin/sendMail", methods=['GET', 'POST'])
+@login_required
+def sendMail():
+    if request.method == 'GET':
+        return 'RENDER FORM FOR SENDING THE EMAIL'
+
+    else:
+        params = '?' + urllib.parse.urlencode({
+            'sendEmailParams': {
+                # TODO:
+            }
+        })
+
+        # response = api.execute_request(emailbase + '/SendEmail' + params)
+
+        return 'SEND AN EMAIL TO MEMBERS, THEN DISPLAY CONFIRMATION.'
 
 """
 WEBPAGES
