@@ -14,6 +14,10 @@ from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 
+# Include our .env file.
+from dotenv import load_dotenv
+load_dotenv()
+
 """ TODO:
 * Known issue: There are some contacts whose entries are completely
 empty in the database. This creates the issue that we have blank or
