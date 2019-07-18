@@ -50,7 +50,7 @@ Wild Apricot
 """
 # Set up our Wild Apricot API client, then validate with contact credentials.
 api = WaApi.WaApiClient(os.getenv('WA_CLIENT_ID'), os.getenv('WA_CLIENT_SECRET'))
-api.authenticate_with_contact_credentials(os.getenv('WA_USERNAME'), os.getenv('WA_PASSWORD')
+api.authenticate_with_contact_credentials(os.getenv('WA_USERNAME'), os.getenv('WA_PASSWORD'))
 
 accountsBase = "/v2.1/accounts/" + os.getenv('WA_ID')
 emailBase = "/v2.1/rpc/" + os.getenv('WA_ID') + "/email"
