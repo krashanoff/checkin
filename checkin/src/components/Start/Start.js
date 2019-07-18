@@ -37,14 +37,6 @@ class Start extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    includesForNames = (array, lastName) => {
-        for (var i = 0; i < array.length; i++)
-            if (array[i][1] === lastName)
-                return true;
-        
-        return false;
-    }
-
     /* handleChange
      * On change of the text field, if the field is of the proper length, then
      * we query for relevant names that match the search term.
@@ -67,6 +59,11 @@ class Start extends React.Component {
             return;
         }
 
+        // define the sorting method used throughout the function.
+        const sortingMethod = (pairA, pairB) => {
+            return pairA[1] > pairB[1];
+        };
+
         // used in almost every single part of the following code:
         var names = [];
 
@@ -87,36 +84,37 @@ class Start extends React.Component {
             // lastNamesVisible state field.
             names = [];
 
-            names.forEach( (name) => {
-                console.log(name);
-            });
+            // this function is used below. It takes the names array and
+            // returns the index of the lastName passed if already present in
+            // the array. Otherwise, it returns -1.
+            const includesForNames = (array, lastName) => {
+                for (var i = 0; i < array.length; i++)
+                    if (array[i][1] === lastName)
+                        return i;
+                
+                return -1;
+            }
 
-            console.log('starting loop block');
-
-            // push the UID and the last name into the array.
-            // this functions similarly to pair<Id[], LastName>.
+            // for all our contacts received:
             Array.from(this.state.data).forEach( (contact) => {
-                const insert = [ [contact.id], contact.accountLast ];
+                // test for inclusion.
+                const includes = includesForNames(names, contact.accountLast);
 
-                if (!this.includesForNames(names, contact.accountLast)) {
-                    names.push(insert);
-                } else {
-                    for (var i = 0; i < names.length; i++) {
-                        if (names[i][1] === contact.accountLast) {
-                            names[i][0].push(contact.id);
-                            break;
-                        }
-                    }
-                }
-            });
+                // if the last name isn't already in the array,
+                // then push a new pair containing an unfilled
+                // array of ids associated to a single last name.
+                if (includes === -1)
+                    names.push([ [contact.id], contact.accountLast ]);
 
-            names.forEach( (name) => {
-                console.log(name);
+                // otherwise, insert at the location returned by our
+                // inclusion function.
+                else
+                    names[includes][0].push(contact.id);
             });
 
             // Use a sorting function designed specifically for the pair data type
             // we are using.
-            names.sort( (pairA, pairB) => { return pairA[1] > pairB[1]; });
+            names.sort(sortingMethod);
 
             // update the current state to reflect the new information
             this.setState({
@@ -139,7 +137,7 @@ class Start extends React.Component {
             if (name[1].toUpperCase().includes(input.toUpperCase()))
                 names.push(name);
         });
-        names.sort( (pairA, pairB) => { return pairA[1] > pairB[1]; });
+        names.sort(sortingMethod);
 
         this.setState({
             lastNamesVisible: names
