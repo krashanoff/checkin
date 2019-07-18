@@ -37,6 +37,14 @@ class Start extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    includesForNames = (array, lastName) => {
+        for (var i = 0; i < array.length; i++)
+            if (array[i][1] === lastName)
+                return true;
+        
+        return false;
+    }
+
     /* handleChange
      * On change of the text field, if the field is of the proper length, then
      * we query for relevant names that match the search term.
@@ -79,23 +87,32 @@ class Start extends React.Component {
             // lastNamesVisible state field.
             names = [];
 
+            names.forEach( (name) => {
+                console.log(name);
+            });
+
+            console.log('starting loop block');
+
             // push the UID and the last name into the array.
             // this functions similarly to pair<Id[], LastName>.
             Array.from(this.state.data).forEach( (contact) => {
-                names.push([ [contact.id], contact.accountLast ]);
-            });
+                const insert = [ [contact.id], contact.accountLast ];
 
-            // eliminate duplicate entries so that the end product is a list of
-            // unique names with associated Id arrays.
-            for (var i = 0; i < names.length; i++) {
-                for (var k = i + 1; k < names.length; k++) {
-                    if (names[i][1] === names[k][1]) {
-                        names[i][0].push(names[k][0][0]);
-                        names.splice(k);
-                        break;
+                if (!this.includesForNames(names, contact.accountLast)) {
+                    names.push(insert);
+                } else {
+                    for (var i = 0; i < names.length; i++) {
+                        if (names[i][1] === contact.accountLast) {
+                            names[i][0].push(contact.id);
+                            break;
+                        }
                     }
                 }
-            }
+            });
+
+            names.forEach( (name) => {
+                console.log(name);
+            });
 
             // Use a sorting function designed specifically for the pair data type
             // we are using.

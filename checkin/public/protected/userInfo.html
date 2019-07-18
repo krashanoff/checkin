@@ -13,11 +13,21 @@
     <h1>{{ data.accountLast }}, {{ data.accountFirst }}</h1>
     <table>
         <tr>
-            <th>Associated Name</th>
-            <th>Contact #</th>
+            <th>Child Name & Birth Year</th>
         </tr>
 
         {% for name in data.children %}
+        <tr>
+            <td>{{ name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <table>
+        <tr>
+            <th>Caregiver Names</th>
+        </tr>
+        {% for name in data.caregivers %}
         <tr>
             <td>{{ name }}</td>
         </tr>

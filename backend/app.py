@@ -173,7 +173,11 @@ def search():
     searchQuery = str(request.args['lastName'])
 
     # Compose the filter string that we need to get our desired search. Then, run the search.
+    # LevelId
     filterString = r"Status eq 'Active' AND 'Group participation' eq 'Pool Members' AND substringof(LastName, '" + searchQuery + r"')"
+    
+    # Below is an attempt at a slightly more targeted query.
+    # r"Status eq 'Active' AND (MembershipLevel.Id eq 940400 OR MembershipLevel.Id eq 1027996 OR MembershipLevel.Id eq 942729 OR MembershipLevel.Id eq 940712) AND substringof(LastName, '" + searchQuery + r"')"
 
     params = '?' + urllib.parse.urlencode({
         '$filter': filterString,
@@ -190,7 +194,6 @@ def search():
     for contact in results.Contacts:
         if str(contact.LastName).upper().startswith(searchQuery.upper()):
             funneled.append(contact)
-
 
     filteredResults = []
     
