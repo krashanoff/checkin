@@ -7,7 +7,7 @@ from flask import Flask, render_template, jsonify, request, abort, redirect, url
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
 
-from . import WaApi
+import WaApi
 
 import pickle
 from googleapiclient.discovery import build
