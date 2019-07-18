@@ -45,18 +45,18 @@ app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization', 'Access-Control-A
 Wild Apricot
 """
 # Set up our Wild Apricot API client, then validate with contact credentials.
-api = WaApi.WaApiClient(os.environ['WA_CLIENT_ID'], os.environ['WA_CLIENT_SECRET'])
-api.authenticate_with_contact_credentials(os.environ['WA_USERNAME'], os.environ['WA_PASSWORD'])
+api = WaApi.WaApiClient(os.getenv('WA_CLIENT_ID'), os.getenv('WA_CLIENT_SECRET'))
+api.authenticate_with_contact_credentials(os.getenv('WA_USERNAME'), os.getenv('WA_PASSWORD')
 
-accountsBase = "/v2.1/accounts/" + os.environ['WA_ID']
-emailBase = "/v2.1/rpc/" + os.environ['WA_ID'] + "/email"
+accountsBase = "/v2.1/accounts/" + os.getenv('WA_ID')
+emailBase = "/v2.1/rpc/" + os.getenv('WA_ID') + "/email"
 
 """
 GOOGLE SHEETS
 """
 # Set up the Google Sheets API client. Validate with oAuth key.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SPREADSHEET_ID = os.environ['SPREADSHEET_ID']
+SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
 creds = None
 
 # The file token.pickle stores the user's access and refresh tokens, and is
