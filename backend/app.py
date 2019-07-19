@@ -7,7 +7,8 @@ from flask import Flask, render_template, jsonify, request, abort, redirect, url
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
 
-from . import WaApi
+# For some reason uWSGI doesn't like relative imports. So we eliminated this one.
+import WaApi
 
 import pickle
 from googleapiclient.discovery import build
