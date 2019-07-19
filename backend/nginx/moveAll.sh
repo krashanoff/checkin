@@ -4,6 +4,13 @@
 # Moves all of our nginx config to the right places
 # and sets things up.
 
+echo "This script must be run as root."
+
+while [ "$USER" != "root" ]
+do
+    sudo su
+done
+
 echo "Copying over and symlinking our site's nginx config file..."
 rm -f /etc/nginx/sites-enabled/checkin
 rm -f /etc/nginx/sites-available/checkin
@@ -12,11 +19,14 @@ cp checkin /etc/ngnix/sites-available/checkin
 ln -s /etc/nginx/sites-available/checkin /etc/nginx/sites-enabled/checkin
 echo "Done."
 
-echo "Copying over our upstart script and cleaning up the garbage leftover from earlier scripts."
+echo "Installing our systemd unit and cleaning up the garbage leftover from earlier scripts."
 rm -f /lib/systemd/system/uwsgi-app@.service
 rm -f /lib/systemd/system/uwsgi-app@.socket
 
-cp /home/dev/checkin/backend/nginx/checkin.service /lib/systemd/system
+systemctl stop checkin.service
+systemctl disable checkin.service
+
+cp /home/dev/checkin/backend/nginx/checkin.service /lib/systemd/system/checkin.service
 systemctl daemon-reload
 echo "Done."
 
