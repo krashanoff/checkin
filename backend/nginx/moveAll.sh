@@ -9,8 +9,8 @@ ln -s /etc/nginx/sites-available/checkin /etc/nginx/sites-enabled/checkin
 echo "Done."
 
 echo "Attempting to disable our old systemd unit, if it exists..."
-systemctl stop checkin
-systemctl disable checkin
+systemctl stop checkin.service
+systemctl disable checkin.service
 echo "Done."
 
 echo "Copying over our upstart script..."
@@ -19,6 +19,6 @@ cp /home/dev/checkin/backend/nginx/checkin.service /lib/systemd/system
 echo "Done."
 
 echo "Enabling the systemd unit..."
-systemctl start checkin
-systemctl enable checkin
+systemctl start checkin.service
+systemctl enable checkin.service
 echo "Script complete."

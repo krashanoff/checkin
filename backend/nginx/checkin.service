@@ -1,7 +1,8 @@
 [Unit]
 Description=Check-in uWSGI server
+After=syslog.target network.target
 
-[Service]
+[Service
 ExecStart=/home/dev/checkin/backend/run.sh
 
 [Install]
