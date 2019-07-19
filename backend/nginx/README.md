@@ -1,3 +1,3 @@
 # nginx
 
-Config and systemd unit.
+Config and systemd units.

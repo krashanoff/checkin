@@ -15,7 +15,7 @@ server {
     }
 
     location @checkin {
-        uwsgi_pass unix:///home/dev/checkin/backend/checkin.sock;
+        uwsgi_pass unix:///var/run/uwsgi/checkin.socket;
         include uwsgi_params;
     }
 }
