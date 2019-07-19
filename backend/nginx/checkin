@@ -10,7 +10,7 @@ server {
 
     location @checkin {
         include uwsgi_params;
-        uwsgi_pass unix:/home/dev/checkin/backend/checkin.sock;
+        uwsgi_pass unix:///home/dev/checkin/backend/checkin.sock;
     }
 
     location / {
