@@ -21,7 +21,15 @@
     justify-content: center;
 }
 
-@media only screen and (max-width: 320px) {
+@media screen and (max-width: 400) {
+    #nav {
+        flex-flow: column wrap;
+    }
+
+    .navLink {
+        margin: .5em;
+    }
+
     #view {
         height: auto;
     }

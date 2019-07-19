@@ -43,7 +43,10 @@ app.config.update(
 CORS
 """
 # Protect our API so that only the server can access it.
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/api/*": {
+    "origins": "*",
+    "methods": ['GET', 'POST']
+    }})
 app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin']
 
 """

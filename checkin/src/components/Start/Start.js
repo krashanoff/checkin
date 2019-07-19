@@ -26,7 +26,6 @@ class Start extends React.Component {
         this.state = {
             value: '',
             data: [],
-            dataVisible: [],
             lastNamesAll: [],
             lastNamesVisible: [],
             redirectWith: [],
@@ -131,7 +130,7 @@ class Start extends React.Component {
         // previously parsed data. This is stored in state.lastNamesVisible.
         // This limits our number of overall API requests per check-in.
 
-        // push only the names that have the current search as a substring.
+        // push only the names that have the current search as a substring.            
         names = [];
         Array.from(this.state.lastNamesAll).forEach( (name) => {
             if (name[1].toUpperCase().includes(input.toUpperCase()))
