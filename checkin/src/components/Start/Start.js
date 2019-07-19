@@ -72,7 +72,7 @@ class Start extends React.Component {
         if (this.state.searchConducted === 'false' && input.length === SEARCHMIN) {
             // get data from the API.
             try {
-                const response = await axios.get('http://localhost:5000/api/search?lastName=' + input);
+                const response = await axios.get('/api/search?lastName=' + input);
                 this.setState({ data: response.data });
                 console.log(response.data);
             } catch (error) {
