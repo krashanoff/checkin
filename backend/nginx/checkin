@@ -1,6 +1,7 @@
 # nginx configuration for the checkin app.
 
 server {
+    listen 80;
     server_name _;
     
     root /home/dev/checkin/checkin/build;
