@@ -1,3 +1,3 @@
 # nginx
 
-Config and startup script.
+Config and systemd unit.

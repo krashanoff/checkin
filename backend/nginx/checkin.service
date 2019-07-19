@@ -1,0 +1,8 @@
+[Unit]
+Description=Check-in uWSGI server
+
+[Service]
+ExecStart=/home/dev/checkin/backend/run.sh
+
+[Install]
+WantedBy=multi-user.target
