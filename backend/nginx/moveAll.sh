@@ -4,8 +4,8 @@
 # Moves all of our nginx config to the right places.
 
 echo "Copying the uWSGI run script..."
-chmod +x run.sh
-cp run.sh /usr/local/bin/run.sh
+chmod u+x run.sh
+cp /home/dev/checkin/backend/nginx/run.sh /usr/local/bin/run.sh
 echo "Done."
 
 echo "Copying over and symlinking our site's nginx config file..."
@@ -19,7 +19,6 @@ systemctl disable checkin.service
 echo "Done."
 
 echo "Copying over our upstart script..."
-chmod u+x /home/dev/checkin/backend/run.sh
 cp /home/dev/checkin/backend/nginx/checkin.service /lib/systemd/system
 systemctl daemon-reload
 echo "Done."
