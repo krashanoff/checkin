@@ -17,6 +17,7 @@ Type=notify
 NotifyAccess=all
 
 ExecStart=/usr/bin/uwsgi --ini /home/dev/checkin/backend/checkin.ini
+ExecStop=/usr/bin/killall uwsgi
 
 [Install]
 WantedBy=multi-user.target
