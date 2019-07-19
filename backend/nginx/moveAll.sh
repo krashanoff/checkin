@@ -3,6 +3,11 @@
 # moveAll.sh
 # Moves all of our nginx config to the right places.
 
+echo "Copying the uWSGI run script..."
+chmod +x run.sh
+cp run.sh /usr/local/bin/run.sh
+echo "Done."
+
 echo "Copying over and symlinking our site's nginx config file..."
 cp checkin /etc/ngnix/sites-available/checkin
 ln -s /etc/nginx/sites-available/checkin /etc/nginx/sites-enabled/checkin
@@ -16,6 +21,7 @@ echo "Done."
 echo "Copying over our upstart script..."
 chmod u+x /home/dev/checkin/backend/run.sh
 cp /home/dev/checkin/backend/nginx/checkin.service /lib/systemd/system
+systemctl daemon-reload
 echo "Done."
 
 echo "Enabling the systemd unit..."
