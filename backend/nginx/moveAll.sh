@@ -4,28 +4,23 @@
 # Moves all of our nginx config to the right places
 # and sets things up.
 
-echo "Copying the uWSGI run config..."
-cp ../checkin.ini /etc/uwsgi/apps-available/checkin.ini
-echo "Done."
-
 echo "Copying over and symlinking our site's nginx config file..."
+rm -f /etc/nginx/sites-enabled/checkin
+rm -f /etc/nginx/sites-available/checkin
+
 cp checkin /etc/ngnix/sites-available/checkin
 ln -s /etc/nginx/sites-available/checkin /etc/nginx/sites-enabled/checkin
 echo "Done."
 
-echo "Attempting to disable our old systemd unit, if it exists..."
-systemctl stop uwsgi-app@checkin.service
-systemctl disable uwsgi-app@checkin.service
-echo "Done."
+echo "Copying over our upstart script and cleaning up the garbage leftover from earlier scripts."
+rm -f /lib/systemd/system/uwsgi-app@.service
+rm -f /lib/systemd/system/uwsgi-app@.socket
 
-echo "Copying over our upstart script..."
-cp /home/dev/checkin/backend/nginx/uwsgi-app@.service /lib/systemd/system
-cp /home/dev/checkin/backend/nginx/uwsgi-app@.socket /lib/systemd/system
+cp /home/dev/checkin/backend/nginx/checkin.service /lib/systemd/system
 systemctl daemon-reload
 echo "Done."
 
 echo "Enabling the systemd unit..."
-systemctl enable uwsgi-app@checkin.socket
-systemctl start uwsgi-app@checkin.service
-systemctl enable uwsgi-app@checkin.service
+systemctl start checkin.service
+systemctl enable checkin.service
 echo "Script complete."
