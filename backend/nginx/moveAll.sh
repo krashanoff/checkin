@@ -6,9 +6,9 @@
 
 echo "This script must be run as root."
 
-while [ "$USER" != "root" ]
+if [ "$USER" != "root" ]
 do
-    sudo su
+    [ "$UID" -eq 0 ] || exec sudo "$0" "$@"
 done
 
 echo "Copying over and symlinking our site's nginx config file..."

@@ -12,7 +12,7 @@ class App extends React.Component {
             <Router>
                 <div id='nav'>
                     <Link className='navLink' to='/'>SHHA Check-In System</Link>
-                    <a className='navLink' href='http://localhost:5000/admin/login'>Admin</a>
+                    <a className='navLink' href='/admin/login'>Admin</a>
                 </div>
 
                 <div id='view'>

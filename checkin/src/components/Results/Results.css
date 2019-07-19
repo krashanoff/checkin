@@ -1,7 +1,7 @@
 #results {
     display: table;
     width: 90%;
-    font-size: 3em;
+    font-size: var(--defaultFontSize);
     border: 1px solid black;
 }
 
