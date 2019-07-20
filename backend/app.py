@@ -8,7 +8,7 @@ from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
 
 # For some reason uWSGI doesn't like relative imports. So we eliminated this one.
-import WaApi
+from . import WaApi
 
 import pickle
 from googleapiclient.discovery import build
@@ -95,15 +95,14 @@ USER MANAGEMENT
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# TODO: Make a proper database.
-tempDb = { 'admin': { 'password': 'P A S S W O R D' }}
+db = { os.getenv('USERNAME'): { 'password': os.getenv('PASSWORD') }}
 
 class User(UserMixin):
     pass
 
 @login_manager.user_loader
 def user_loader(username):
-    if username not in tempDb:
+    if username not in db:
         return
     
     user = User()
@@ -114,7 +113,7 @@ def user_loader(username):
 def request_loader(request):
     username = request.form.get('username')
 
-    if username not in tempDb:
+    if username not in db:
         return
         
     user = User()
@@ -213,6 +212,7 @@ def search():
 
 # Takes a JSON object and logs it to our Google Sheets spreadsheet.
 @app.route("/api/log", methods=["POST"])
+@login_required
 def log():
     # Convert our data from byte-like -> JSON.
     jsonData = json.loads(request.data.decode('utf8').replace('\'', '\"'))
@@ -285,6 +285,10 @@ def log():
 
     return 'Check-in logged successfully.'
 
+"""
+ADMIN
+"""
+
 # Provides a login page for the admin table.
 @app.route("/admin/login", methods=["GET", "POST"])
 def login():
@@ -294,20 +298,20 @@ def login():
 
     # Since our database is currently lackluster, check to make sure we don't cause
     # any errors with the request passed.
-    if ('username' not in request.form) or (request.form['username'] not in tempDb):
+    if ('username' not in request.form) or (request.form['username'] not in db):
         return 'ERROR: BAD REQUEST'
 
     # Get the username from the request.
     username = request.form['username']
 
     # Validate the information and then pass to the admin page.
-    if request.form['password'] == tempDb[username]['password']:
+    if request.form['password'] == db[username]['password']:
         
         user = User()
         user.id = username
         login_user(user)
 
-        return redirect(url_for('admin'))
+        return redirect(url_for('react'))
 
     # Under all other conditions, return an error.
     return 'ERROR: BAD REQUEST'
@@ -361,11 +365,13 @@ WEBPAGES
 
 # Render our SPA
 @app.route("/")
+@login_required
 def react():
     return render_template("index.html")
 
 # 404
 @app.route("/<path:path>")
+@login_required
 def missing(path):
     return '404: %s does not exist.' % path
 
