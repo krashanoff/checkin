@@ -171,13 +171,13 @@ API
 """
 
 # Searches the database for members whose last names start with the query.
-@app.route("/api/search", methods=["GET"])
-def search():
+@app.route("/api/search/<lastName>", methods=["GET"])
+def search(lastName):
     # Catch a lack of search query.
-    if 'lastName' not in request.args:
-        return "ERROR: No lastName provided for query."
+    if lastName is None:
+        return 'Invalid query.'
 
-    searchQuery = str(request.args['lastName'])
+    searchQuery = str(lastName)
 
     # Compose the filter string that we need to get our desired search. Then, run the search.
     # LevelId
