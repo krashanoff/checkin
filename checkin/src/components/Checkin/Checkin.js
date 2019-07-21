@@ -138,8 +138,7 @@ class Checkin extends React.Component {
                 data: requestData
         })
         // if successful, then continue to the start screen.
-        .then( (response) => {
-            alert(response.data);
+        .then( () => {
             window.location.href = '/';
         })
         // if the request fails, then display our error message.
