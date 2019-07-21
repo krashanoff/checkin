@@ -8,7 +8,7 @@ from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
 
 # For some reason uWSGI doesn't like relative imports. So we eliminated this one.
-from . import WaApi
+import WaApi
 
 import pickle
 from googleapiclient.discovery import build
@@ -172,6 +172,7 @@ API
 
 # Searches the database for members whose last names start with the query.
 @app.route("/api/search/<lastName>", methods=["GET"])
+@login_required
 def search(lastName):
     # Catch a lack of search query.
     if lastName is None:
