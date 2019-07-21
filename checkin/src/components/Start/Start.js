@@ -194,7 +194,7 @@ class Start extends React.Component {
         return(
             <div id='start'>
                 <form id='suggestions' onSubmit={this.handleSubmit}>
-                    <input type='text' placeholder='Please enter your last name...' value={this.state.value} onChange={this.handleChange} />
+                    <input type='text' placeholder='Please enter a last name...' value={this.state.value} onChange={this.handleChange} />
                     <div id='names'>
                         {names}
                     </div>
