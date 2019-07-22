@@ -7,14 +7,6 @@ from flask import Flask, render_template, jsonify, request, abort, redirect, url
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
 
-# For some reason uWSGI doesn't like relative imports. So we eliminated this one.
-import WaApi
-
-import pickle
-from googleapiclient.discovery import build
-from google.auth.transport.requests import Request
-from google_auth_oauthlib.flow import InstalledAppFlow
-
 # Include our .env file.
 from dotenv import load_dotenv
 load_dotenv()
@@ -52,6 +44,8 @@ app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization', 'Access-Control-A
 """
 Wild Apricot
 """
+import WaApi
+
 # Set up our Wild Apricot API client, then validate with contact credentials.
 api = WaApi.WaApiClient(os.getenv('WA_CLIENT_ID'), os.getenv('WA_CLIENT_SECRET'))
 api.authenticate_with_contact_credentials(os.getenv('WA_USERNAME'), os.getenv('WA_PASSWORD'))
@@ -62,31 +56,9 @@ emailBase = "/v2.1/rpc/" + os.getenv('WA_ID') + "/email"
 """
 GOOGLE SHEETS
 """
-# Set up the Google Sheets API client. Validate with oAuth key.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
-creds = None
+import gapi
 
-# The file token.pickle stores the user's access and refresh tokens, and is
-# created automatically when the authorization flow completes for the first
-# time.
-if os.path.exists('token.pickle'):
-    with open('token.pickle', 'rb') as token:
-        creds = pickle.load(token)
-
-# If there are no (valid) credentials available, let the user log in.
-if not creds or not creds.valid:
-    if creds and creds.expired and creds.refresh_token:
-        creds.refresh(Request())
-    else:
-        flow = InstalledAppFlow.from_client_secrets_file(
-            'credentials.json', SCOPES)
-        creds = flow.run_local_server()
-    # Save the credentials for the next run
-    with open('token.pickle', 'wb') as token:
-        pickle.dump(creds, token)
-
-service = build('sheets', 'v4', credentials=creds)
+service = gapi.getApi(os.getenv('SPREADSHEET_ID'))
 
 """
 USER MANAGEMENT
@@ -229,7 +201,7 @@ def log():
     body = {
         'values': [
             [
-                datetime.now().strftime("%Y-%b-%d %H:%M"),
+                datetime.utcnow().strftime("%Y-%b-%d %H:%M"),
                 data['id'],
                 data['lastName']
             ]
@@ -275,10 +247,6 @@ def log():
     body['values'][0].append(data['adultGuests'])
     body['values'][0].append(data['childGuests'])
 
-    print(body['values'])
-
-    print("Appending now.")
-
     # Insert the values.
     service.spreadsheets().values().append(
         spreadsheetId=SPREADSHEET_ID, range='Sheet1!A2:N',
@@ -289,7 +257,6 @@ def log():
 """
 ADMIN
 """
-
 # Provides a login page for the admin table.
 @app.route("/admin/login", methods=["GET", "POST"])
 def login():
