@@ -8,8 +8,6 @@ const axios = require('axios');
 const SEARCHMIN = 3;
 
 /* TODO:
- *  - Clean up the formatting of this entire file.
- *  - Actually parse input as we go to request the proper query information.
  *  - Set catchalls for when we read this.state.data.
  *  - Associate each Link with the contact of concern, not just the entire block
  *    of data we initially retrieve.
@@ -33,7 +31,6 @@ class Start extends React.Component {
         };
 
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     /* handleChange
@@ -51,17 +48,13 @@ class Start extends React.Component {
         // then remove visible suggestions.
         if (input.length < SEARCHMIN) {
             this.setState({
+                lastNamesAll: [],
                 lastNamesVisible: [],
                 searchConducted: 'false'
             });
 
             return;
         }
-
-        // define the sorting method used throughout the function.
-        const sortingMethod = (pairA, pairB) => {
-            return pairA[1] > pairB[1];
-        };
 
         // used in almost every single part of the following code:
         var names = [];
@@ -111,19 +104,11 @@ class Start extends React.Component {
                     names[includes][0].push(contact.id);
             });
 
-            // Use a sorting function designed specifically for the pair data type
-            // we are using.
-            names.sort(sortingMethod);
-
             // update the current state to reflect the new information
             this.setState({
                 lastNamesAll: names,
-                lastNamesVisible: names,
                 searchConducted: 'true'
             });
-
-            // exit on completion.
-            return;
         }
 
         // Based on the current input, limit the number of visible results from
@@ -136,7 +121,11 @@ class Start extends React.Component {
             if (name[1].toUpperCase().includes(input.toUpperCase()))
                 names.push(name);
         });
-        names.sort(sortingMethod);
+
+        // sort using a method specifically for our data type.
+        names.sort( (pairA, pairB) => {
+            return pairA[1] > pairB[1];
+        });
 
         this.setState({
             lastNamesVisible: names
@@ -148,7 +137,7 @@ class Start extends React.Component {
      * to our currently visible names, and then force load the results
      * page with the current data and names.
      */
-    handleSubmit(event) {
+    handleSubmit = (event) => {
         event.preventDefault();
 
         // construct a concatenated array of the presently available ids and associated names

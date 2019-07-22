@@ -1,4 +1,28 @@
+/* Globals
+ * Color schemes, global resets, etc.
+ */
+
+ @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+:root {
+    --black: #101010;
+    --background: #7ea7d8;
+    --offwhite: #fafafa;
+    --defaultboxshadow: 0 2px 10px 2px rgba(0,0,0,.12);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    color: var(--black);
+    text-decoration: none;
+    border: none;
+    background: none;
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
+    font-size: 2em;
+}
+
 /* Styles for our admin pages. */
 table {
-    border: thin solid black;
+    border: thin solid var(--black);
 }

@@ -33,4 +33,4 @@ def getApi(spreadsheetId):
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
 
-    service = build('sheets', 'v4', credentials=creds)
+    return build('sheets', 'v4', credentials=creds)

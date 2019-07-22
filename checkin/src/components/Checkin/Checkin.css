@@ -134,11 +134,11 @@ Checkin webpage styling
     background: var(--background);
     color: var(--offwhite);
     padding: 5%;
-    border-radius: 50px;
+    border-radius: 35px;
     font-size: 3rem;
     transition: box-shadow .3s linear, background .3s linear;
 }
-#checkinButton:hover, #checkinButton:active {
+#checkinButton:active {
     box-shadow: var(--defaultboxshadow);
     background: var(--activeBlue);
 }

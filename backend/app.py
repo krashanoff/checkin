@@ -7,6 +7,10 @@ from flask import Flask, render_template, jsonify, request, abort, redirect, url
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
 
+import WaApi
+
+import gapi
+
 # Include our .env file.
 from dotenv import load_dotenv
 load_dotenv()
@@ -42,10 +46,8 @@ cors = CORS(app, resources={r"/api/*": {
 app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin']
 
 """
-Wild Apricot
+API FUNCTIONALITY
 """
-import WaApi
-
 # Set up our Wild Apricot API client, then validate with contact credentials.
 api = WaApi.WaApiClient(os.getenv('WA_CLIENT_ID'), os.getenv('WA_CLIENT_SECRET'))
 api.authenticate_with_contact_credentials(os.getenv('WA_USERNAME'), os.getenv('WA_PASSWORD'))
@@ -53,17 +55,14 @@ api.authenticate_with_contact_credentials(os.getenv('WA_USERNAME'), os.getenv('W
 accountsBase = "/v2.1/accounts/" + os.getenv('WA_ID')
 emailBase = "/v2.1/rpc/" + os.getenv('WA_ID') + "/email"
 
-"""
-GOOGLE SHEETS
-"""
-import gapi
-
+# Get our `service` variable for the Google Sheets API.
 service = gapi.getApi(os.getenv('SPREADSHEET_ID'))
 
 """
-USER MANAGEMENT
+LOGIN MANAGEMENT
 """
-# Set up the login service and "database"
+
+# Set up the login service and "database".
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -87,7 +86,7 @@ def request_loader(request):
 
     if username not in db:
         return
-        
+
     user = User()
     user.id = username
 

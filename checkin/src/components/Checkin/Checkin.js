@@ -34,18 +34,21 @@ class Counter extends React.Component {
         this.state = {
             value: 0
         };
-
-        this.handleChange = this.handleChange.bind(this);
     }
 
     handleChange = (e) => {
+        // fired on subtraction.
         if (e.target.className === 'minus') {
+            // if the value is currently zero, we cannot go negative. Return early.
             if (this.state.value === 0)
                 return;
 
+            // otherwise update the state.
             this.setState({value: this.state.value - 1});
         }
+        // fired on addition.
         else
+            // positives are far less sanitized. Simply update the state.
             this.setState({value: this.state.value + 1});
     }
 
