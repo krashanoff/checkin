@@ -8,10 +8,9 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 GOOGLE SHEETS
 """
 
-def getApi(spreadsheetId):
+def getApi():
     # Set up the Google Sheets API client. Validate with oAuth key.
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-    SPREADSHEET_ID = spreadsheetId
     creds = None
 
     # The file token.pickle stores the user's access and refresh tokens, and is

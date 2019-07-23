@@ -56,7 +56,8 @@ accountsBase = "/v2.1/accounts/" + os.getenv('WA_ID')
 emailBase = "/v2.1/rpc/" + os.getenv('WA_ID') + "/email"
 
 # Get our `service` variable for the Google Sheets API.
-service = gapi.getApi(os.getenv('SPREADSHEET_ID'))
+SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
+service = gapi.getApi()
 
 """
 LOGIN MANAGEMENT
