@@ -291,12 +291,6 @@ def logout():
     
     return 'Logged out successfully.'
 
-# Returns the admin page under the conditions that the current user is logged in.
-@app.route("/admin")
-@login_required
-def admin():
-    return render_template('protected/admin.html', username = current_user.id)
-
 # Route for getting more information about a specific member.
 @app.route("/admin/user/<id>")
 @login_required
@@ -339,7 +333,6 @@ def react():
 
 # 404
 @app.route("/<path:path>")
-@login_required
 def missing(path):
     return '404: %s does not exist.' % path
 
