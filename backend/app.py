@@ -313,7 +313,13 @@ def sendMail():
     else:
         params = '?' + urllib.parse.urlencode({
             'sendEmailParams': {
-                # TODO:
+                'Subject': 'Important Notice for SHHA Pool Members',
+                'Body': request.form['body'],
+                'Recipients': [
+                    {
+                        'RECIPIENTS'
+                    }
+                ]
             }
         })
 

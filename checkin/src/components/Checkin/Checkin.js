@@ -78,7 +78,8 @@ class Checkin extends React.Component {
 
         this.state = {
             id: values.id,
-            contact: values.contact
+            contact: values.contact,
+            submissionInProgress: ''
         };
     }
 
@@ -88,6 +89,12 @@ class Checkin extends React.Component {
      */
     handleSubmit = (e) => {
         e.preventDefault();
+
+        // stop a secondary submission from being completed in parallel.
+        if (this.state.submissionInProgress === 'true')
+            return;
+
+        this.setState({ submissionInProgress: 'true' });
 
         var requestData = {};
 
@@ -146,6 +153,7 @@ class Checkin extends React.Component {
         })
         // if the request fails, then display our error message.
         .catch( () => {
+            this.setState({ submissionInProgress: 'false' });
             alert("ERROR: Logging could not be completed properly. Please wait a few seconds and try again.\nIf this message persists, then contact the administrator.");
         });
     }
