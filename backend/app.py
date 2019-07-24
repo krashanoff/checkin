@@ -40,7 +40,7 @@ CORS
 """
 # Protect our API so that only the server can access it.
 cors = CORS(app, resources={r"/api/*": {
-    "origins": "*",
+    "origins": "*.krashanoff.com",
     "methods": ['GET', 'POST']
     }})
 app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin']
@@ -183,6 +183,23 @@ def search(lastName):
     # Finally, return all of our data as a JSON object to the client.                    
     return jsonify(filteredResults)
 
+# TODO:
+# Retrieves all pertinent data about a *specific* contact.
+@app.route("/api/userInfo/<uid>", methods=["GET"])
+@login_required
+def userInfo(uid):
+    if uid is None:
+        return 'Invalid query.'
+
+    # Collect our basic information.
+    response = api.execute_request(accountsBase + "/contacts/" + str(uid))
+    data = parseContact(response)
+
+    # Collect additional critical information.
+    data.update({ 'email': response.Email })
+
+    return data
+
 # Takes a JSON object and logs it to our Google Sheets spreadsheet.
 @app.route("/api/log", methods=["POST"])
 @login_required
@@ -290,18 +307,6 @@ def logout():
     logout_user()
     
     return 'Logged out successfully.'
-
-# Route for getting more information about a specific member.
-@app.route("/admin/user/<id>")
-@login_required
-def userInfo(id):
-    # TODO: Sanitize
-    response = api.execute_request(accountsBase + '/contacts/' + str(id))
-
-    # Get all the important details, with some small caveats.
-    data = parseContact(response)
-
-    return render_template('protected/userInfo.html', data = data)
 
 # TODO: Send an email to all SHHA Pool members.
 @app.route("/admin/sendMail", methods=['GET', 'POST'])
