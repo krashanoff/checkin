@@ -7,9 +7,9 @@ from flask import Flask, render_template, jsonify, request, abort, redirect, url
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
 
-import WaApi
+from . import WaApi
 
-import gapi
+from . import gapi
 
 # Include our .env file.
 from dotenv import load_dotenv
@@ -40,7 +40,7 @@ CORS
 """
 # Protect our API so that only the server can access it.
 cors = CORS(app, resources={r"/api/*": {
-    "origins": "*.krashanoff.com",
+    "origins": "*",
     "methods": ['GET', 'POST']
     }})
 app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin']
@@ -183,7 +183,6 @@ def search(lastName):
     # Finally, return all of our data as a JSON object to the client.                    
     return jsonify(filteredResults)
 
-# TODO:
 # Retrieves all pertinent data about a *specific* contact.
 @app.route("/api/userInfo/<uid>", methods=["GET"])
 @login_required
@@ -195,9 +194,35 @@ def userInfo(uid):
     response = api.execute_request(accountsBase + "/contacts/" + str(uid))
     data = parseContact(response)
 
-    # Collect additional critical information.
+    # Collect additional critical information:
+    #   - Phone number
+    #   - Spouse phone number
+    #   - Address components
     data.update({ 'email': response.Email })
 
+    for field in response.FieldValues:
+        if field.FieldName == r"Primary Member's Phone":
+            data.update({ 'primaryPhone': field.Value })
+
+        if field.FieldName == r"Spouse / Partner Phone":
+            data.update({ 'spousePhone': field.Value })
+        
+        if field.FieldName == r"House # Only":
+            data.update({ 'houseNumber': str(field.Value) })
+
+        if field.FieldName == r"Street":
+            data.update({ 'street': str(field.Value) })
+        
+        if field.FieldName == r"City":
+            data.update({ 'city': str(field.Value) })
+
+        if field.FieldName == r"State":
+            data.update({ 'state': str(field.Value.Label) })
+        
+        if field.FieldName == r"Zip":
+            data.update({ 'zip': str(field.Value) })
+
+    # Respond.
     return data
 
 # Takes a JSON object and logs it to our Google Sheets spreadsheet.
