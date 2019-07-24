@@ -42,7 +42,7 @@ class Start extends React.Component {
     async handleChange(event) {
         // update our state to match the input
         const input = event.target.value;
-        this.setState({value: input});
+        this.setState({ value: input });
 
         // if we have not yet met the minimum query length,
         // then remove visible suggestions.

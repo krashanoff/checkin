@@ -7,9 +7,9 @@ from flask import Flask, render_template, jsonify, request, abort, redirect, url
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
 
-import WaApi
+from . import WaApi
 
-import gapi
+from . import gapi
 
 # Include our .env file.
 from dotenv import load_dotenv
@@ -188,7 +188,7 @@ def search(lastName):
 @login_required
 def log():
     # Convert our data from byte-like -> JSON.
-    jsonData = json.loads(request.data.decode('utf8').replace('\'', '\"'))
+    jsonData = json.loads(urllib.parse.unquote(request.data.decode('utf8')))
 
     # Sanitize to ensure the request is as expected.
     if 'data' not in jsonData:

@@ -94,8 +94,6 @@ class Checkin extends React.Component {
         if (this.state.submissionInProgress === 'true')
             return;
 
-        this.setState({ submissionInProgress: 'true' });
-
         var requestData = {};
 
         // append id.
@@ -142,6 +140,10 @@ class Checkin extends React.Component {
                 alert('ERROR: No adults or children are selected');
                 return;
             }
+        
+        // indicate to the component that we have a submission in progress that should
+        // not be duplicated.
+        this.setState({ submissionInProgress: 'true' });
 
         // submit our request with the necessary data.
         axios.post('/api/log', {
@@ -213,16 +215,18 @@ class Checkin extends React.Component {
                 </table>
                 
                 <table className='namesTable' id='children'>
-                    <tbody>
+                    <thead>
                         <tr>
                             <th>Children</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         {
                         // Render the child table only if child names are present.
                         // TODO: Make this look nicer.
                         children.length > 0 ?
 
-                        children : <div />
+                        children : <tr><td>This account has no children associated.</td></tr>
                         }
                     </tbody>
                 </table>
