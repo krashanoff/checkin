@@ -62,6 +62,7 @@ class Results extends React.Component {
 
         return (
             <table id='results'>
+                <caption>There are multiple entries for this last name. Which family?</caption>
                 <thead>
                     <tr>
                         <th>Last Name</th>
@@ -69,6 +70,7 @@ class Results extends React.Component {
                         <th>Spouse Name</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {entries}
                 </tbody>

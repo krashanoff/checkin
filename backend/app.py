@@ -7,9 +7,9 @@ from flask import Flask, render_template, jsonify, request, abort, redirect, url
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
 
-from . import WaApi
+import WaApi
 
-from . import gapi
+import gapi
 
 # Include our .env file.
 from dotenv import load_dotenv
@@ -225,6 +225,27 @@ def userInfo(uid):
     # Respond.
     return data
 
+# Send an emergency email to all SHHA pool members.
+@app.route("/api/sendMail", methods=["POST"])
+@login_required
+def sendMail():
+    return 'MAIL SENT'
+    
+    params = '?' + urllib.parse.urlencode({
+        'sendEmailParams': {
+            'Subject': 'Important Notice for SHHA Pool Members',
+            'Body': request.form['body'],
+            'Recipients': [
+                {
+                    'RECIPIENTS'
+                }
+            ]
+        }
+    })
+
+    # response = api.execute_request(emailbase + '/SendEmail' + params)
+    return 'SEND AN EMAIL TO MEMBERS, THEN DISPLAY CONFIRMATION.'
+
 # Takes a JSON object and logs it to our Google Sheets spreadsheet.
 @app.route("/api/log", methods=["POST"])
 @login_required
@@ -332,30 +353,6 @@ def logout():
     logout_user()
     
     return 'Logged out successfully.'
-
-# TODO: Send an email to all SHHA Pool members.
-@app.route("/admin/sendMail", methods=['GET', 'POST'])
-@login_required
-def sendMail():
-    if request.method == 'GET':
-        return 'RENDER FORM FOR SENDING THE EMAIL'
-
-    else:
-        params = '?' + urllib.parse.urlencode({
-            'sendEmailParams': {
-                'Subject': 'Important Notice for SHHA Pool Members',
-                'Body': request.form['body'],
-                'Recipients': [
-                    {
-                        'RECIPIENTS'
-                    }
-                ]
-            }
-        })
-
-        # response = api.execute_request(emailbase + '/SendEmail' + params)
-
-        return 'SEND AN EMAIL TO MEMBERS, THEN DISPLAY CONFIRMATION.'
 
 """
 WEBPAGES
