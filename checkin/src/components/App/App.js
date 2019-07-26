@@ -13,7 +13,9 @@ class App extends React.Component {
             <Router>
                 <div id='nav'>
                     <Link className='navLink' to='/'>SHHA Check-In System</Link>
-                    <Link className='navLink' to='/admin'>Admin</Link>
+                    <div id='links'>
+                        <Link className='navLink' to='/admin'>Admin</Link>
+                    </div>
                 </div>
 
                 <div id='view'>

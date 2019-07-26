@@ -7,6 +7,12 @@
     justify-content: space-between;
 }
 
+#links {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+
 .navLink {
     color: var(--titlecolor);
     font-size: 2em;

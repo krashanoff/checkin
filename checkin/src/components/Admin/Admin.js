@@ -38,7 +38,9 @@ class Admin extends React.Component {
     constructor(props) {
         super(props);
 
-        this.setState({ value: '' });
+        this.state = {
+            value: ''
+        };
     }
 
     handleChange = (e) => {
@@ -69,7 +71,13 @@ class Admin extends React.Component {
                     </table>
                 </div>
 
-                <UserInfo uid='2' />
+                {
+                    this.state.value.length === 3 ?
+
+                    <UserInfo uid='2' />
+
+                    : <UserInfo uid='null' />
+                }
             </div>
         );
     }

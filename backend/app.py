@@ -225,7 +225,7 @@ def userInfo(uid):
     # Respond.
     return data
 
-# Send an emergency email to all SHHA pool members.
+# TODO: Send an emergency email to all SHHA pool members.
 @app.route("/api/sendMail", methods=["POST"])
 @login_required
 def sendMail():
