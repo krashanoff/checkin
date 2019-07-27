@@ -1,6 +1,7 @@
 import React from 'react';
 import './Start.css';
 import { Link, Redirect } from 'react-router-dom';
+import Axios from 'axios';
 const axios = require('axios');
 
 // dictates the minimum amount required to input before we
@@ -31,6 +32,17 @@ class Start extends React.Component {
         };
 
         this.handleChange = this.handleChange.bind(this);
+    }
+
+    // this function is used below. It takes the names array and
+    // returns the index of the lastName passed if already present in
+    // the array. Otherwise, it returns -1.
+    includesForNames = (array, lastName) => {
+        for (var i = 0; i < array.length; i++)
+            if (array[i][1] === lastName)
+                return i;
+        
+        return -1;
     }
 
     /* handleChange
@@ -76,21 +88,10 @@ class Start extends React.Component {
             // lastNamesVisible state field.
             names = [];
 
-            // this function is used below. It takes the names array and
-            // returns the index of the lastName passed if already present in
-            // the array. Otherwise, it returns -1.
-            const includesForNames = (array, lastName) => {
-                for (var i = 0; i < array.length; i++)
-                    if (array[i][1] === lastName)
-                        return i;
-                
-                return -1;
-            }
-
             // for all our contacts received:
             Array.from(this.state.data).forEach( (contact) => {
                 // test for inclusion.
-                const includes = includesForNames(names, contact.accountLast);
+                const includes = this.includesForNames(names, contact.accountLast);
 
                 // if the last name isn't already in the array,
                 // then push a new pair containing an unfilled
@@ -139,6 +140,63 @@ class Start extends React.Component {
      */
     handleSubmit = (event) => {
         event.preventDefault();
+
+        if (this.state.value.length > 1 && this.state.lastNamesVisible.length === 0) {
+            Axios.get('/api/search/' + this.state.value)
+            .then( (response) => {
+                var visible = [];
+
+                /* TODO:
+                 * Unfortunately I had to implement this fix right before
+                 * I left for vacation. This is an absolute hack that just
+                 * had to get done before I left. I will improve the fix
+                 * when I return.
+                 */
+
+                // for all our contacts received:
+                Array.from(response.data).forEach( (contact) => {
+                    // test for inclusion.
+                    const includes = this.includesForNames(visible, contact.accountLast);
+
+                    // if the last name isn't already in the array,
+                    // then push a new pair containing an unfilled
+                    // array of ids associated to a single last name.
+                    if (includes === -1)
+                        visible.push([ [contact.id], contact.accountLast ]);
+
+                    // otherwise, insert at the location returned by our
+                    // inclusion function.
+                    else
+                        visible[includes][0].push(contact.id);
+                });
+
+                console.log(visible);
+
+                // set our state to properly work for the code to follow.
+                this.setState({
+                    data: response.data,
+                    lastNamesVisible: visible
+                });
+
+                // construct a concatenated array of the presently available ids and associated names
+                // to send to the results page.
+                var rw = [];
+                Array.from(this.state.lastNamesVisible).forEach( (tuple) => {
+                    tuple[0].forEach( (id) => {
+                        rw.push(id);
+                    });
+                });
+
+                this.setState({
+                    redirectWith: rw
+                });
+
+                return;
+            })
+            .catch( () => {
+                alert('Failed to get data from the server. Is it running?');
+            });
+        }
 
         // construct a concatenated array of the presently available ids and associated names
         // to send to the results page.

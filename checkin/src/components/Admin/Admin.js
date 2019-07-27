@@ -10,25 +10,14 @@ class UserInfo extends React.Component {
     constructor(props) {
         super(props);
 
-        this.setState({
-            contactInfo: {}
-        });
-
-        Axios.get('/api/userInfo/' + this.props.uid)
-        .then( (response) => {
-            this.setState({
-                contactInfo: response
-            });
-        })
-        .catch( () => {
-            alert('Data could not be fetched from the server. If this problem persists, please contact the administrator.');
-        });
+        if (typeof this.props.data === 'undefined')
+            console.log('NO DATA PROVIDED');
     }
-
+    
     render() {
         return (
             <div className='userInfo'>
-                <h1>NAME</h1>
+                <p>Family Name: {this.props.data.lastName}</p>
             </div>
         );
     }

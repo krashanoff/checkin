@@ -18,6 +18,13 @@ class Results extends React.Component {
     }
 
     render() {
+        // catch no results found.
+        if (this.props.location.state.ids.length === 0) {
+            return (
+                <p>No members were found matching your query. Please <Link to='/'>return to the start</Link>.</p>
+            );
+        }
+
         // if we have only one id passed, then just redirect to the proper checkin page.
         if (this.props.location.state.ids.length === 1) {
             // select only the contact we are concerned with from our data.
@@ -62,7 +69,7 @@ class Results extends React.Component {
 
         return (
             <table id='results'>
-                <caption>There are multiple entries for this last name. Which family?</caption>
+                <caption>Which family?</caption>
                 <thead>
                     <tr>
                         <th>Last Name</th>
