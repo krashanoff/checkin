@@ -14,7 +14,7 @@
     font-size: var(--defaultFontSize);
 }
 #suggestions input:focus {
-    border-bottom: solid blue;
+    border-bottom: solid var(--background);
 }
 
 #names * {
@@ -36,4 +36,8 @@
 }
 .suggestion:hover {
     background: var(--darkeroffwhite);
+}
+
+.noResults {
+    background: var(--warningRed);
 }

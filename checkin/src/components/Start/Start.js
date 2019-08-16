@@ -28,7 +28,8 @@ class Start extends React.Component {
             lastNamesAll: [],
             lastNamesVisible: [],
             redirectWith: [],
-            searchConducted: ''
+            searchConducted: '',
+            noResults: ''
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -78,7 +79,6 @@ class Start extends React.Component {
             try {
                 const response = await axios.get('/api/search/' + input);
                 this.setState({ data: response.data });
-                console.log(response.data);
             } catch (error) {
                 alert('Failed retrieving data from the server. Is the server running?');
                 return;
@@ -119,8 +119,9 @@ class Start extends React.Component {
         // push only the names that have the current search as a substring.            
         names = [];
         Array.from(this.state.lastNamesAll).forEach( (name) => {
-            if (name[1].toUpperCase().includes(input.toUpperCase()))
+            if (name[1].toUpperCase().includes(input.toUpperCase())) {
                 names.push(name);
+            }
         });
 
         // sort using a method specifically for our data type.
@@ -131,6 +132,18 @@ class Start extends React.Component {
         this.setState({
             lastNamesVisible: names
         });
+
+        // if no matches are found, then display our "no results found"
+        // message.
+        if (this.state.lastNamesVisible.length === 0 && this.state.searchConducted === 'true') {
+            this.setState({
+                noResults: 'true'
+            });
+        } else {
+            this.setState({
+                noResults: 'false'
+            });
+        }
     }
 
     /* handleSubmit
@@ -169,8 +182,6 @@ class Start extends React.Component {
                     else
                         visible[includes][0].push(contact.id);
                 });
-
-                console.log(visible);
 
                 // set our state to properly work for the code to follow.
                 this.setState({
@@ -226,17 +237,24 @@ class Start extends React.Component {
 
         // parse our current data to render the suggestions
         var names = [];
-        
-        Array.from(this.state.lastNamesVisible).forEach( (name) => {
-            // create a new suggestion Link with uid information.
-            names.push(<Link to={{
-                pathname: '/results',
-                state: {
-                    ids: name[0],
-                    data: this.state.data
-                }
-            }} className='suggestion' key={name[1]}>{name[1]}</Link>);
-        });
+
+        // if we have no results, display the "no results" message.
+        if (this.state.noResults === 'true') {
+            names.push(<div className='suggestion noResults' key='0'>No results found.</div>);
+        }
+        // otherwise, display our suggestions.
+        else {
+            Array.from(this.state.lastNamesVisible).forEach( (name) => {
+                // create a new suggestion Link with uid information.
+                names.push(<Link to={{
+                    pathname: '/results',
+                    state: {
+                        ids: name[0],
+                        data: this.state.data
+                    }
+                }} className='suggestion' key={name[1]}>{name[1]}</Link>);
+            });
+        }
 
         return(
             <div id='start'>

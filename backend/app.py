@@ -16,10 +16,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 """ TODO:
-* Known issue: There are some contacts whose entries are completely
-empty in the database. This creates the issue that we have blank or
-undefined pieces of information in our search results or check-in
-page.
 * Catch improper data types provided in each request.
 """
 

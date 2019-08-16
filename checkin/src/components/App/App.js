@@ -14,7 +14,7 @@ class App extends React.Component {
                 <div id='nav'>
                     <Link className='navLink' to='/'>SHHA Check-In System</Link>
                     <div id='links'>
-                        <Link className='navLink' to='/admin'>Admin</Link>
+                        <a class='navLink' href='/admin/logout'>Logout</a>
                     </div>
                 </div>
 

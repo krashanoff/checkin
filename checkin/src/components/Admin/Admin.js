@@ -1,6 +1,5 @@
 import React from 'react';
 import './Admin.css';
-import Axios from 'axios';
 
 /* TODO:
  *  - Implement some sort of lazy loading functionality for the table.
