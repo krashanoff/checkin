@@ -53,7 +53,7 @@ class Counter extends React.Component {
     }
 
     render() {
-        return(
+        return (
             <div className='counter'>
                 <button type='button' className='minus' onClick={this.handleChange}>-</button>
                 <button name={this.props.name} type='button' className='count'>{this.state.value}</button>

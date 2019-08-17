@@ -242,7 +242,7 @@ class Start extends React.Component {
             });
         }
 
-        return(
+        return (
             <div id='start'>
                 <form id='suggestions' onSubmit={this.handleSubmit}>
                     <input type='text' placeholder='Please enter a last name...' value={this.state.value} onChange={this.handleChange} />

@@ -5,6 +5,12 @@ server {
 
     access_log  /home/dev/access.log;
     error_log   /home/dev/error.log;
+    root /home/dev/checkin/checkin/build;
+    
+    location /protected {
+        deny all;
+        return 404;
+    }
 
     location / {
         try_files $uri @checkin;
@@ -13,6 +19,10 @@ server {
     location @checkin {
         uwsgi_pass unix:///home/dev/checkin/backend/checkin.sock;
         include uwsgi_params;
+    }
+
+    location /static {
+        alias /home/dev/checkin/checkin/build/static;
     }
 
     listen 443 ssl; # managed by Certbot
