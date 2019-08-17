@@ -2,7 +2,6 @@ import React from 'react';
 import './Start.css';
 import { Link, Redirect } from 'react-router-dom';
 import Axios from 'axios';
-const axios = require('axios');
 
 // dictates the minimum amount required to input before we
 // start parsing for suggestions.
@@ -33,9 +32,10 @@ class Start extends React.Component {
         };
 
         this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    // this function is used below. It takes the names array and
+    // this function is used later on. It takes the names array and
     // returns the index of the lastName passed if already present in
     // the array. Otherwise, it returns -1.
     includesForNames = (array, lastName) => {
@@ -55,7 +55,9 @@ class Start extends React.Component {
     async handleChange(event) {
         // update our state to match the input
         const input = event.target.value;
-        this.setState({ value: input });
+        this.setState({
+            value: input
+        });
 
         // if we have not yet met the minimum query length,
         // then remove visible suggestions.
@@ -77,9 +79,11 @@ class Start extends React.Component {
         if (this.state.searchConducted === 'false' && input.length === SEARCHMIN) {
             // get data from the API.
             try {
-                const response = await axios.get('/api/search/' + input);
-                this.setState({ data: response.data });
-            } catch (error) {
+                const response = await Axios.get('/api/search/' + input);
+                this.setState({
+                    data: response.data
+                });
+            } catch {
                 alert('Failed retrieving data from the server. Is the server running?');
                 return;
             }
@@ -151,61 +155,43 @@ class Start extends React.Component {
      * to our currently visible names, and then force load the results
      * page with the current data and names.
      */
-    handleSubmit = (event) => {
+    async handleSubmit(event) {
         event.preventDefault();
 
+        // In the case that we have no suggestions, but 
         if (this.state.value.length > 1 && this.state.lastNamesVisible.length === 0) {
-            Axios.get('/api/search/' + this.state.value)
-            .then( (response) => {
-                var visible = [];
-
-                /* TODO:
-                 * Unfortunately I had to implement this fix right before
-                 * I left for vacation. This is an absolute hack that just
-                 * had to get done before I left. I will improve the fix
-                 * when I return.
-                 */
-
-                // for all our contacts received:
-                Array.from(response.data).forEach( (contact) => {
-                    // test for inclusion.
-                    const includes = this.includesForNames(visible, contact.accountLast);
-
-                    // if the last name isn't already in the array,
-                    // then push a new pair containing an unfilled
-                    // array of ids associated to a single last name.
-                    if (includes === -1)
-                        visible.push([ [contact.id], contact.accountLast ]);
-
-                    // otherwise, insert at the location returned by our
-                    // inclusion function.
-                    else
-                        visible[includes][0].push(contact.id);
-                });
-
-                // set our state to properly work for the code to follow.
+            try {
+                const response = await Axios.get('/api/search/' + this.state.value);
                 this.setState({
-                    data: response.data,
-                    lastNamesVisible: visible
+                    data: response.data
                 });
-
-                // construct a concatenated array of the presently available ids and associated names
-                // to send to the results page.
-                var rw = [];
-                Array.from(this.state.lastNamesVisible).forEach( (tuple) => {
-                    tuple[0].forEach( (id) => {
-                        rw.push(id);
-                    });
-                });
-
-                this.setState({
-                    redirectWith: rw
-                });
-
+            } catch {
+                alert('Failed retrieving data from the server. Is the server running?');
                 return;
-            })
-            .catch( () => {
-                alert('Failed to get data from the server. Is it running?');
+            }
+            
+            var visible = [];
+
+            // for all our contacts received:
+            Array.from(this.state.data).forEach( (contact) => {
+                // test for inclusion.
+                const includes = this.includesForNames(visible, contact.accountLast);
+
+                // if the last name isn't already in the array,
+                // then push a new pair containing an unfilled
+                // array of ids associated to a single last name.
+                if (includes === -1)
+                    visible.push([ [contact.id], contact.accountLast ]);
+
+                // otherwise, insert at the location returned by our
+                // inclusion function.
+                else
+                    visible[includes][0].push(contact.id);
+            });
+
+            // set our state to properly work for the code to follow.
+            this.setState({
+                lastNamesVisible: visible
             });
         }
 

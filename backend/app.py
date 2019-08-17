@@ -363,7 +363,7 @@ def react():
 # 404
 @app.route("/<path:path>")
 def missing(path):
-    return redirect(url_for('login'))
+    return redirect(url_for('react'))
 
 if __name__ == "__main__":
     app.run(use_reloader=True)
