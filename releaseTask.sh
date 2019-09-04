@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 mkdir tmp
 touch tmp/credentials.json
