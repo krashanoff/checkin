@@ -12,11 +12,11 @@ GOOGLE SHEETS
 # Create a credentials file from an environment variable.
 def createCredsFromEnv():
     # Remove the file if it exists
-    if os.path.exists("/tmp/credentials.json"):
-        os.remove("/tmp/credentials.json")
+    if os.path.exists("tmp/credentials.json"):
+        os.remove("tmp/credentials.json")
 
     # Create the file using our environment variable.
-    creds = open("/tmp/credentials.json", "a+")
+    creds = open("tmp/credentials.json", "a+")
     if os.environ.get('GAPI_CREDS') is None:
         raise "Please declare your Google API Credentials in your environment variables."
 
@@ -43,7 +43,7 @@ def getApi():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                '/tmp/credentials.json', SCOPES)
+                'tmp/credentials.json', SCOPES)
             creds = flow.run_local_server()
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
