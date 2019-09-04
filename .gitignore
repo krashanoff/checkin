@@ -1,1 +1,9 @@
 **/.vscode/
+*.pyc
+*.sqlite
+*.pem
+.env
+token.pickle
+credentials.json
+env/
+__pycache__/
