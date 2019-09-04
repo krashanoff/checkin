@@ -24,8 +24,8 @@ FLASK CONFIG
 """
 # Set up our app.
 app = Flask(__name__,
-            static_folder = '../checkin/build/static',
-            template_folder = '../checkin/build')
+            static_folder = './checkin/build/static',
+            template_folder = './checkin/build')
 app.config.update(
     DEBUG = True,
     SECRET_KEY = 'dev'
