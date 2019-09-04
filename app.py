@@ -9,9 +9,13 @@ from flask_login import LoginManager, UserMixin, login_required, logout_user, lo
 
 import WaApi
 
+# Import gapi and create the credentials.json file.
 import gapi
+gapi.createCredsFromEnv()
 
 """ TODO:
+* Use environ.get() instead of referencing directly via key.
+  Also throw errors if they are not present.
 * Catch improper data types provided in each request.
 """
 

@@ -1,5 +1,6 @@
-import os.path
+import os
 import pickle
+import json
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -8,6 +9,22 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 GOOGLE SHEETS
 """
 
+# Create a credentials file from an environment variable.
+def createCredsFromEnv():
+    # Remove the file if it exists
+    if os.path.exists("credentials.json"):
+        os.remove("credentials.json")
+
+    # Create the file using our environment variable.
+    creds = open("credentials.json", "a+")
+    if os.environ.get('GAPI_CREDS') is None:
+        raise "Please declare your Google API Credentials in your environment variables."
+
+    # Write to our file then close it.
+    creds.write(str(os.environ['GAPI_CREDS']))
+    creds.close()
+
+# Returns a Google Sheets API client.
 def getApi():
     # Set up the Google Sheets API client. Validate with oAuth key.
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
