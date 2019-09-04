@@ -1,2 +1,1 @@
-release: chmod +x releaseTask.sh && ./releaseTask.sh
-web: uwsgi checkin.ini
+web: chmod +x releaseTask.sh && ./releaseTask.sh && uwsgi checkin.ini
