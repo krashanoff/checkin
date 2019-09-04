@@ -11,10 +11,6 @@ import WaApi
 
 import gapi
 
-# Include our .env file.
-from dotenv import load_dotenv
-load_dotenv()
-
 """ TODO:
 * Catch improper data types provided in each request.
 """
@@ -45,14 +41,14 @@ app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization', 'Access-Control-A
 API FUNCTIONALITY
 """
 # Set up our Wild Apricot API client, then validate with contact credentials.
-api = WaApi.WaApiClient(os.getenv('WA_CLIENT_ID'), os.getenv('WA_CLIENT_SECRET'))
-api.authenticate_with_contact_credentials(os.getenv('WA_USERNAME'), os.getenv('WA_PASSWORD'))
+api = WaApi.WaApiClient(os.environ['WA_CLIENT_ID'], os.environ['WA_CLIENT_SECRET'])
+api.authenticate_with_contact_credentials(os.environ['WA_USERNAME'], os.environ['WA_PASSWORD'])
 
-accountsBase = "/v2.1/accounts/" + os.getenv('WA_ID')
-emailBase = "/v2.1/rpc/" + os.getenv('WA_ID') + "/email"
+accountsBase = "/v2.1/accounts/" + os.environ['WA_ID']
+emailBase = "/v2.1/rpc/" + os.environ['WA_ID'] + "/email"
 
 # Get our `service` variable for the Google Sheets API.
-SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
+SPREADSHEET_ID = os.environ['SPREADSHEET_ID']
 service = gapi.getApi()
 
 """
@@ -63,7 +59,7 @@ LOGIN MANAGEMENT
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-db = { os.getenv('USERNAME'): { 'password': os.getenv('PASSWORD') }}
+db = { os.environ['USERNAME']: { 'password': os.environ['PASSWORD'] }}
 
 class User(UserMixin):
     pass
