@@ -9,15 +9,26 @@ from flask_login import LoginManager, UserMixin, login_required, logout_user, lo
 
 import WaApi
 
-# Import gapi and create the credentials.json file.
 import gapi
-gapi.createCredsFromEnv()
 
 """ TODO:
-* Use environ.get() instead of referencing directly via key.
-  Also throw errors if they are not present.
 * Catch improper data types provided in each request.
 """
+
+# Check that all necessary environment variables are declared.
+needs = [
+    'WA_CLIENT_ID',
+    'WA_CLIENT_SECRET',
+    'WA_USERNAME',
+    'WA_PASSWORD',
+    'WA_ID',
+    'SPREADSHEET_ID',
+    'USERNAME',
+    'PASSWORD'
+    ]
+for need in needs:
+    if os.environ.get(str(need)) is None:
+        raise "Error: all necessary environment variables must be declared."
 
 """
 FLASK CONFIG
@@ -34,7 +45,6 @@ app.config.update(
 """
 CORS
 """
-# Protect our API so that only the server can access it.
 cors = CORS(app, resources={r"/api/*": {
     "origins": "*",
     "methods": ['GET', 'POST']

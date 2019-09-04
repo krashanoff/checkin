@@ -1,4 +1,5 @@
 import os
+import io
 import pickle
 import json
 from googleapiclient.discovery import build
@@ -8,21 +9,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 """
 GOOGLE SHEETS
 """
-
-# Create a credentials file from an environment variable.
-def createCredsFromEnv():
-    # Remove the file if it exists
-    if os.path.exists("tmp/credentials.json"):
-        os.remove("tmp/credentials.json")
-
-    # Create the file using our environment variable.
-    creds = open("tmp/credentials.json", "a+")
-    if os.environ.get('GAPI_CREDS') is None:
-        raise "Please declare your Google API Credentials in your environment variables."
-
-    # Write to our file then close it.
-    creds.write(str(os.environ['GAPI_CREDS']))
-    creds.close()
 
 # Returns a Google Sheets API client.
 def getApi():
@@ -42,9 +28,24 @@ def getApi():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
+            # Ensure that we have an environment variable holding our GAPI
+            # credentials.json.
+            if os.environ.get('GAPI_CREDS') is None:
+                raise "Please declare a GAPI_CREDS environment variable."
+
+            # Create a temporary file object that we then write our credentials
+            # to.
+            temp = io.StringIO()
+            temp.write(os.environ['GAPI_CREDS'])
+
+            # Create our flow object from said file object.
             flow = InstalledAppFlow.from_client_secrets_file(
-                'tmp/credentials.json', SCOPES)
+                temp, SCOPES)
             creds = flow.run_local_server()
+
+            # Close the file object.
+            temp.close()
+
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
