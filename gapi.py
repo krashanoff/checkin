@@ -1,5 +1,5 @@
 import os
-import io
+import tempfile
 import pickle
 import json
 from googleapiclient.discovery import build
@@ -35,12 +35,14 @@ def getApi():
 
             # Create a temporary file object that we then write our credentials
             # to.
-            temp = io.StringIO()
-            temp.write(os.environ['GAPI_CREDS'])
+            temp = tempfile.TemporaryFile()
+            temp.write(bytes(os.environ['GAPI_CREDS'], 'UTF-8'))
+
+            # Reset the file to the first position.
+            temp.seek(0)
 
             # Create our flow object from said file object.
-            flow = InstalledAppFlow.from_client_secrets_file(
-                temp, SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file(temp.name, SCOPES)
             creds = flow.run_local_server()
 
             # Close the file object.
