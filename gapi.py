@@ -33,23 +33,23 @@ def getApi():
                 raise "Please declare a GAPI_CREDS environment variable."
 
             # Create tmp directory if it doesn't exist.
-            if not os.path.exists("/tmp"):
-                os.mkdir("/tmp")
+            if not os.path.exists("tmp"):
+                os.mkdir("tmp")
 
             # Delete the file if it exists.
-            if os.path.exists("/tmp/credentials.json"):
-                os.remove("/tmp/credentials.json")
+            if os.path.exists("tmp/credentials.json"):
+                os.remove("tmp/credentials.json")
 
             # Create a file that we then write our credentials
             # to.
-            credsFile = open("/tmp/credentials.json", "w+")
+            credsFile = open("tmp/credentials.json", "w+")
             credsFile.write(os.environ['GAPI_CREDS'])
 
             # Reset the file to the first position.
             credsFile.seek(0)
 
             # Create our flow object from said file object.
-            flow = InstalledAppFlow.from_client_secrets_file("/tmp/credentials.json", SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file("tmp/credentials.json", SCOPES)
             creds = flow.run_local_server()
 
             # Close the file object.
