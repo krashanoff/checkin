@@ -27,11 +27,6 @@ def getApi():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            # Ensure that we have an environment variable holding our GAPI
-            # credentials.json.
-            if os.environ.get('GAPI_CREDS') is None:
-                raise "Please declare a GAPI_CREDS environment variable."
-
             # Create our flow object from the credentials file.
             flow = InstalledAppFlow.from_client_secrets_file("tmp/credentials.json", SCOPES)
             creds = flow.run_local_server()
