@@ -1,2 +1,2 @@
-release: mkdir tmp && touch tmp/credentials.json && echo "$GAPI_CREDS" > tmp/credentials.json && echo "Completed creation of credentials.json." && exit 0
+release: chmod u+x releaseTask.sh && ./releaseTask.sh
 web: uwsgi checkin.ini
