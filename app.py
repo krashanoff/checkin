@@ -15,8 +15,6 @@ import gapi
 * Catch improper data types provided in each request.
 """
 
-
-
 """
 FLASK CONFIG
 """
@@ -50,7 +48,20 @@ api.authenticate_with_contact_credentials(os.environ['WA_USERNAME'], os.environ[
 accountsBase = "/v2.1/accounts/" + os.environ['WA_ID']
 emailBase = "/v2.1/rpc/" + os.environ['WA_ID'] + "/email"
 
-
+# Check that all necessary environment variables are declared.
+needs = [
+    'WA_CLIENT_ID',
+    'WA_CLIENT_SECRET',
+    'WA_USERNAME',
+    'WA_PASSWORD',
+    'WA_ID',
+    'SPREADSHEET_ID',
+    'USERNAME',
+    'PASSWORD'
+    ]
+for need in needs:
+    if os.environ.get(str(need)) is None:
+        raise "Error: all necessary environment variables must be declared."
 
 """
 LOGIN MANAGEMENT
@@ -305,7 +316,7 @@ def log():
 
     # Insert the values.
     service.spreadsheets().values().append(
-        spreadsheetId=SPREADSHEET_ID, range='Sheet1!A2:N',
+        spreadsheetId=os.environ['SPREADSHEET_ID'], range='Sheet1!A2:N',
         valueInputOption='RAW', insertDataOption='INSERT_ROWS', body=body).execute()
 
     return 'Check-in logged successfully.'
